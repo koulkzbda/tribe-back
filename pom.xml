@@ -108,10 +108,10 @@
 		<profile>
 			<id>dev</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
 				<jdbc.url>jdbc:mysql://localhost:3306/tribe-db-dev?serverTimezone=UTC#</jdbc.url>
 				<jdbc.user>root</jdbc.user>
 				<jdbc.pass></jdbc.pass>
@@ -125,6 +125,31 @@
 					<artifactId>mysql-connector-java</artifactId>
 					<scope>runtime</scope>
 				</dependency>
+			</dependencies>
+		</profile>
+		
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<jdbc.driver>org.postgresql.Driver</jdbc.driver>
+				<jdbc.url>jdbc:postgresql://ec2-54-247-107-109.eu-west-1.compute.amazonaws.com:5432/d8nh0aslb0g10i</jdbc.url>
+				<jdbc.user>iowflzsrvahajy</jdbc.user>
+				<jdbc.pass>6c0fcdc6981f26a959fc59f12653c93e31e1cb0acf88a26ad41fc02d1ed72de6</jdbc.pass>
+				<jpa.hibernate.ddl>update</jpa.hibernate.ddl>
+				<jdbc.dialect>org.hibernate.dialect.PostgreSQLDialect</jdbc.dialect>
+				<jdbc.connections.max.active>1</jdbc.connections.max.active>
+			</properties>
+			<dependencies>
+				<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>42.2.16</version>
+				</dependency>
+
 			</dependencies>
 		</profile>
 	</profiles>
