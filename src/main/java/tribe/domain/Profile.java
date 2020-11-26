@@ -16,12 +16,21 @@ public class Profile {
     protected String bio;
     
     @OneToOne
+    protected Pictures pictures;
+    
+    @OneToOne
     protected User user;
 
     public Profile() {}
     
 	public Profile(String bio, User user) {
 		this.bio = bio;
+		this.user = user;
+	}
+
+	public Profile(String bio, Pictures pictures, User user) {
+		this.bio = bio;
+		this.pictures = pictures;
 		this.user = user;
 	}
 
@@ -39,5 +48,21 @@ public class Profile {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Pictures getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(Pictures pictures) {
+		this.pictures = pictures;
 	}
 }

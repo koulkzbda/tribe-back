@@ -9,9 +9,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import tribe.domain.Profile;
 import tribe.domain.RoleUser;
 import tribe.domain.User;
 import tribe.domain.enumaration.Role;
+import tribe.repository.ProfileRepo;
 import tribe.repository.UserRepo;
 
 @Component
@@ -19,11 +21,17 @@ import tribe.repository.UserRepo;
 public class StartupListener {
 
 	private UserRepo userRepo;
+	private ProfileRepo profileRepo;
 	private PasswordEncoder passwordEncoder;
 
-	public StartupListener(PasswordEncoder passwordEncoder, UserRepo userRepo) {
+	public StartupListener(
+			PasswordEncoder passwordEncoder,
+			UserRepo userRepo,
+			ProfileRepo profileRepo
+			) {
 		this.passwordEncoder = passwordEncoder;
 		this.userRepo = userRepo;
+		this.profileRepo = profileRepo;
 	}
 
 	@EventListener(ContextRefreshedEvent.class)
@@ -115,6 +123,10 @@ public class StartupListener {
 			koulk.setPass(passwordEncoder.encode("superpass"));
 			koulk.setRoles(Arrays.asList(new RoleUser(koulk, Role.ROLE_USER)));
 			this.userRepo.save(koulk);
+			
+			//  Create profiles
+			Profile profile1 = new Profile("This my bio", user1);
+			this.profileRepo.save(profile1);
 		}
 	}
 }
