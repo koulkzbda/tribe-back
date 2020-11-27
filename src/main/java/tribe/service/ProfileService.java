@@ -4,23 +4,23 @@ import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.ProfileDto;
 import tribe.repository.ProfileRepo;
-import tribe.repository.UserRepo;
+import tribe.repository.MemberRepo;
 
 @Service
 public class ProfileService {
 	
-	protected UserRepo userRepo;
+	protected MemberRepo memberRepo;
 	protected ProfileRepo profileRepo;
 	protected SecurityServiceImpl securityService;
 	
-	public ProfileService(UserRepo userRepo, ProfileRepo profileRepo, SecurityServiceImpl securityService) {
-		this.userRepo = userRepo;
+	public ProfileService(MemberRepo memberRepo, ProfileRepo profileRepo, SecurityServiceImpl securityService) {
+		this.memberRepo = memberRepo;
 		this.profileRepo = profileRepo;
 		this.securityService = securityService;
 	}
 	
-	public ProfileDto findByConnectedUser() {
-		return new ProfileDto(profileRepo.findByUserId(userRepo.findByEmail(securityService.getUserEmail()).get().getId()).get());
+	public ProfileDto findByConnectedMember() {
+		return new ProfileDto(profileRepo.findByMemberId(memberRepo.findByEmail(securityService.getUserEmail()).get().getId()).get());
 	}
 
 }

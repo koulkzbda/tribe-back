@@ -8,6 +8,6 @@ import tribe.domain.Profile;
 
 public interface ProfileRepo extends JpaRepository<Profile, Long> {
 
-	Optional<Profile> findByUserId(Long id);
+	Optional<Profile> findByMemberId(Long id);
 	
 }

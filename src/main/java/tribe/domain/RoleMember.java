@@ -12,23 +12,23 @@ import javax.persistence.ManyToOne;
 import tribe.domain.enumaration.Role;
 
 @Entity
-public class RoleUser {
+public class RoleMember {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public RoleUser() {
+    public RoleMember() {
     }
 
-    public RoleUser(User user, Role role) {
-        this.user = user;
+    public RoleMember(Member member, Role role) {
+        this.member = member;
         this.role = role;
     }
 
@@ -48,11 +48,11 @@ public class RoleUser {
         this.role = role;
     }
 
-    public User getUser() {
-        return user;
+    public Member getUser() {
+        return member;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Member member) {
+        this.member = member;
     }
 }

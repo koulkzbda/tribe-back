@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class User {
+public class Member {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +31,13 @@ public class User {
     @OneToOne
     protected Profile profile;
     
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    protected List<RoleUser> roles;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    protected List<RoleMember> roles;
     
-    public User() {}
+    public Member() {}
 
-	public User(String firstName, String lastName, String email, String pass, LocalDateTime registeredAt,
-			Profile profile, List<RoleUser> roles) {
+	public Member(String firstName, String lastName, String email, String pass, LocalDateTime registeredAt,
+			Profile profile, List<RoleMember> roles) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -104,11 +104,11 @@ public class User {
 		this.profile = profile;
 	}
 
-	public List<RoleUser> getRoles() {
+	public List<RoleMember> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleUser> roles) {
+	public void setRoles(List<RoleMember> roles) {
 		this.roles = roles;
 	}
 }

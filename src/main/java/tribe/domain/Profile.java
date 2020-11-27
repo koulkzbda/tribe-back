@@ -19,19 +19,19 @@ public class Profile {
     protected Pictures pictures;
     
     @OneToOne
-    protected User user;
+    protected Member member;
 
     public Profile() {}
     
-	public Profile(String bio, User user) {
+	public Profile(String bio, Member member) {
 		this.bio = bio;
-		this.user = user;
+		this.member = member;
 	}
 
-	public Profile(String bio, Pictures pictures, User user) {
+	public Profile(String bio, Pictures pictures, Member member) {
 		this.bio = bio;
 		this.pictures = pictures;
-		this.user = user;
+		this.member = member;
 	}
 
 	public String getBio() {
@@ -42,12 +42,12 @@ public class Profile {
 		this.bio = bio;
 	}
 
-	public User getUser() {
-		return user;
+	public Member getUser() {
+		return member;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUser(Member member) {
+		this.member = member;
 	}
 
 	public Long getId() {

@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
-import tribe.controller.dto.UserDto;
-import tribe.repository.UserRepo;
+import tribe.controller.dto.MemberDto;
+import tribe.repository.MemberRepo;
 
 /**
  * Handle HTTP Response if Authentication is successful
@@ -45,7 +45,7 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
     private String SECRET;
 
     @Autowired
-    private UserRepo userRepo;
+    private MemberRepo memberRepo;
 
     @Autowired
     private ObjectMapper mapper;
@@ -62,10 +62,10 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
 
         String rolesList = user.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
 
-        tribe.domain.User tribeUser = userRepo.findByEmail(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
+        tribe.domain.Member tribeUser = memberRepo.findByEmail(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
 
         response.setContentType("application/json");
-        response.getWriter().write(mapper.writeValueAsString(new UserDto(tribeUser)));
+        response.getWriter().write(mapper.writeValueAsString(new MemberDto(tribeUser)));
 
         Map<String, Object> tokenInfos = new HashMap<>();
         tokenInfos.put("roles", rolesList);

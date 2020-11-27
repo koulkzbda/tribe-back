@@ -19,7 +19,7 @@ public class ProfileController {
 
 	@GetMapping("/profile")
 	public ResponseEntity<ProfileDto> findByPassagerConnecte() {
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.findByConnectedUser());
+		return ResponseEntity.status(HttpStatus.OK).body(profileService.findByConnectedMember());
 	}
 
 }
