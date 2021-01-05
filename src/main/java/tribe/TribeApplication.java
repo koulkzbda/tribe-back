@@ -18,7 +18,7 @@ public class TribeApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOrigins("*")
-						.allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS")
+						.allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
 						.allowCredentials(true);
 				;
 			}
