@@ -4,44 +4,40 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-public class Pictures {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Pictures {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	protected String id;
 	
-	@OneToOne
-    protected Picture headlinePicture;
     
-    @OneToMany(mappedBy = "pictures", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pictures", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     protected List<Picture> pictures;
+    
+    public Pictures() {}
 
-	public Pictures(Picture headlinePicture, List<Picture> pictures) {
-		this.headlinePicture = headlinePicture;
+	public Pictures(List<Picture> pictures) {
 		this.pictures = pictures;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
-	}
-
-	public Picture getHeadlinePicture() {
-		return headlinePicture;
-	}
-
-	public void setHeadlinePicture(Picture headlinePicture) {
-		this.headlinePicture = headlinePicture;
 	}
 
 	public List<Picture> getPictures() {
@@ -50,5 +46,9 @@ public class Pictures {
 
 	public void setPictures(List<Picture> pictures) {
 		this.pictures = pictures;
+	}
+	
+	public void addPictures(List<Picture> pictures) {
+		this.pictures.addAll(pictures);
 	}
 }

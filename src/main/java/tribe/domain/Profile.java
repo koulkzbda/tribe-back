@@ -1,9 +1,11 @@
 package tribe.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -15,10 +17,12 @@ public class Profile {
 
     protected String bio;
     
-    @OneToOne
-    protected Pictures pictures;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    protected ProfilePictures profilePictures;
     
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn( name = "member_id")
     protected Member member;
 
     public Profile() {}
@@ -28,9 +32,9 @@ public class Profile {
 		this.member = member;
 	}
 
-	public Profile(String bio, Pictures pictures, Member member) {
+	public Profile(String bio, ProfilePictures profilePictures, Member member) {
 		this.bio = bio;
-		this.pictures = pictures;
+		this.profilePictures = profilePictures;
 		this.member = member;
 	}
 
@@ -42,14 +46,6 @@ public class Profile {
 		this.bio = bio;
 	}
 
-	public Member getUser() {
-		return member;
-	}
-
-	public void setUser(Member member) {
-		this.member = member;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -58,11 +54,19 @@ public class Profile {
 		this.id = id;
 	}
 
-	public Pictures getPictures() {
-		return pictures;
+	public ProfilePictures getProfilePictures() {
+		return profilePictures;
 	}
 
-	public void setPictures(Pictures pictures) {
-		this.pictures = pictures;
+	public void setProfilePictures(ProfilePictures profilePictures) {
+		this.profilePictures = profilePictures;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
 	}
 }
