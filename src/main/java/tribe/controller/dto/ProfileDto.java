@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Profile;
+import tribe.domain.MemberProfile;
 
 public class ProfileDto {
 
-	protected Long id;
+	protected String id;
 
 	protected String bio;
 	
@@ -16,19 +16,19 @@ public class ProfileDto {
 
 	public ProfileDto() {}
 	
-	public ProfileDto(Long id, String bio) {
+	public ProfileDto(String id, String bio) {
 		this.id = id;
 		this.bio = bio;
 	}
 
-	public ProfileDto(Long id, String bio, List<PictureDto> profilePictures) {
+	public ProfileDto(String id, String bio, List<PictureDto> profilePictures) {
 		super();
 		this.id = id;
 		this.bio = bio;
 		this.profilePictures = profilePictures;
 	}
 
-	public ProfileDto(Profile profile) {
+	public ProfileDto(MemberProfile profile) {
 		this.id = profile.getId();
 		this.bio = profile.getBio();
 		this.profilePictures = profile.getProfilePictures().getPictures().stream().map(PictureDto::new).collect(Collectors.toList());
@@ -42,11 +42,11 @@ public class ProfileDto {
 		this.bio = bio;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

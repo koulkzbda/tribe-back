@@ -47,7 +47,7 @@ public class ProfileController {
 			@RequestParam("profileId") String profileId, @RequestParam(defaultValue = "-1") String profilePictureName)
 			throws IOException, NoSuchElementException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.addProfilePictures(files, Long.parseLong(profileId), profilePictureName));
+		return ResponseEntity.status(HttpStatus.OK).body(profileService.addProfilePictures(files, profileId, profilePictureName));
 
 	}
 	

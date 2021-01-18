@@ -16,45 +16,45 @@ import tribe.controller.dto.ErrorCode;
 import tribe.controller.dto.ErrorMessageDto;
 import tribe.controller.dto.PictureDto;
 import tribe.controller.dto.ProfileDto;
+import tribe.domain.MemberProfile;
 import tribe.domain.Picture;
-import tribe.domain.Profile;
-import tribe.domain.ProfilePictures;
+import tribe.domain.MemberProfilePictures;
 import tribe.exception.InvalidPictureException;
+import tribe.repository.MemberProfileRepo;
 import tribe.repository.MemberRepo;
 import tribe.repository.PictureRepo;
-import tribe.repository.ProfilePicturesRepo;
-import tribe.repository.ProfileRepo;
+import tribe.repository.MemberProfilePicturesRepo;
 
 @Service
 public class ProfileService {
 
 	protected MemberRepo memberRepo;
-	protected ProfileRepo profileRepo;
-	protected ProfilePicturesRepo profilePicturesRepo;
+	protected MemberProfileRepo memberProfileRepo;
+	protected MemberProfilePicturesRepo memberProfilePicturesRepo;
 	protected PictureRepo pictureRepo;
 	protected SecurityServiceImpl securityService;
 
-	public ProfileService(MemberRepo memberRepo, ProfileRepo profileRepo, ProfilePicturesRepo profilePicturesRepo,
+	public ProfileService(MemberRepo memberRepo, MemberProfileRepo memberProfileRepo, MemberProfilePicturesRepo memberProfilePicturesRepo,
 			PictureRepo pictureRepo, SecurityServiceImpl securityService) {
 		this.memberRepo = memberRepo;
-		this.profileRepo = profileRepo;
+		this.memberProfileRepo = memberProfileRepo;
 		this.securityService = securityService;
-		this.profilePicturesRepo = profilePicturesRepo;
+		this.memberProfilePicturesRepo = memberProfilePicturesRepo;
 		this.pictureRepo = pictureRepo;
 	}
 
 	public ProfileDto findByConnectedMember() {
-		return new ProfileDto(profileRepo
+		return new ProfileDto(memberProfileRepo
 				.findEagerByMemberId(memberRepo.findByEmail(securityService.getUserEmail()).get().getId()).get());
 
 	}
 
 	@Transactional
-	public List<PictureDto> addProfilePictures(MultipartFile[] files, Long profileId, String profilePictureName)
+	public List<PictureDto> addProfilePictures(MultipartFile[] files, String profileId, String profilePictureName)
 			throws IOException, NoSuchElementException {
 
-		ProfilePictures pictures = this.profilePicturesRepo.findByProfileId(profileId).get();
-		Profile profile = this.profileRepo.findById(profileId).get();
+		MemberProfilePictures pictures = this.memberProfilePicturesRepo.findByMemberProfileId(profileId).get();
+		MemberProfile profile = this.memberProfileRepo.findById(profileId).get();
 		List<Picture> picturesList = new ArrayList<Picture>();
 
 		for (int i = 0; i < files.length; i++) {
@@ -71,7 +71,7 @@ public class ProfileService {
 		pictures.addPictures(picturesList);
 		profile.setProfilePictures(pictures);
 
-		this.profileRepo.save(profile);
+		this.memberProfileRepo.save(profile);
 		
 		return getProfilePictures();
 
@@ -79,12 +79,12 @@ public class ProfileService {
 
 	@Transactional
 	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws InvalidPictureException {
-		Profile profile = profileRepo.findEagerByMemberId(
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
 				.get().getId()).get();
-		ProfilePictures profilePictures = profile.getProfilePictures();
-		List<Picture> pictures = profilePictures.getPictures();
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
 		
 		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureDto.getId())) ) {
 			pictures.stream().forEach(pict -> {
@@ -98,32 +98,32 @@ public class ProfileService {
 			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
 		}
 		
-		profilePictures.setPictures(pictures);
-		profile.setProfilePictures(profilePictures);
-		this.profileRepo.save(profile);
+		memberProfilePictures.setPictures(pictures);
+		profile.setProfilePictures(memberProfilePictures);
+		this.memberProfileRepo.save(profile);
 		
 		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
 	
 	public List<PictureDto> getProfilePictures() {
-		Profile profile = profileRepo.findEagerByMemberId(
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
 				.get().getId()).get();
-		ProfilePictures profilePictures = profile.getProfilePictures();
-		List<Picture> pictures = profilePictures.getPictures();
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
 		
 		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
 	
 	@Transactional
 	public List<PictureDto> deleteProfilePicture(String id) throws InvalidPictureException {
-		Profile profile = profileRepo.findEagerByMemberId(
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
 				.get().getId()).get();
-		ProfilePictures profilePictures = profile.getProfilePictures();
-		List<Picture> pictures = profilePictures.getPictures();
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
 		
 		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(id)) ) {
 			this.pictureRepo.deleteById(id);
@@ -132,22 +132,22 @@ public class ProfileService {
 			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
 		}
 		
-		profilePictures.setPictures(pictures);
-		profile.setProfilePictures(profilePictures);
-		this.profileRepo.save(profile);
+		memberProfilePictures.setPictures(pictures);
+		profile.setProfilePictures(memberProfilePictures);
+		this.memberProfileRepo.save(profile);
 		
 		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
 	
 	@Transactional
 	public ProfileDto updateBio(ProfileDto profileDto) {
-		Profile profile = profileRepo.findEagerByMemberId(
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
 				.get().getId()).get();
 
 		profile.setBio(profileDto.getBio());
-		this.profileRepo.save(profile);
+		this.memberProfileRepo.save(profile);
 		
 		return profileDto;
 	}
