@@ -19,6 +19,8 @@ public class Metric {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	protected String id;
 	
+	protected String name;
+	
 	protected String unit;
 	
 	protected Boolean isPrincipal;
@@ -32,7 +34,8 @@ public class Metric {
 
     public Metric() {}
 
-	public Metric(String unit, Boolean isPrincipal, MetricValue metricValue, Progression progression) {
+	public Metric(String name, String unit, Boolean isPrincipal, MetricValue metricValue, Progression progression) {
+		this.name = name;
 		this.unit = unit;
 		this.isPrincipal = isPrincipal;
 		this.metricValue = metricValue;
@@ -45,6 +48,14 @@ public class Metric {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getUnit() {

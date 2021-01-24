@@ -85,6 +85,14 @@ public class Publication {
 		this.author = author;
 		this.likes = likes;
 	}
+	
+	public Integer getNbLikes() {
+		return likes.size();
+	}
+	
+	public Integer getNbComments() {
+		return commentsOfPublication.size();
+	}
 
 	public String getId() {
 		return id;

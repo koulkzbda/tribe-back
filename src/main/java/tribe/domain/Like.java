@@ -27,7 +27,7 @@ public class Like {
 
 	@ManyToOne
 	@MapsId(value = "publicationId")
-	@JoinColumn(name = "publication_id")
+//	@JoinColumn(name = "publication_id")
 	protected Publication publication;
 	
 	@CreationTimestamp

@@ -38,7 +38,7 @@ public class Member {
     protected MemberWall memberWall;
     
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    protected List<RoleMember> roles;
+    protected List<RoleMember> roles = new ArrayList<>();
     
     @OneToMany(mappedBy = "liker")
 	protected List<Like> likes = new ArrayList<>();
@@ -47,10 +47,10 @@ public class Member {
 	protected List<System> systems = new ArrayList<>();
     
     @OneToMany(mappedBy = "accountabilityPartner", cascade = CascadeType.ALL)
-    protected List<HabitContract> habitContracts;
+    protected List<HabitContract> habitContracts = new ArrayList<>();
     
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    protected List<Step> habitScorecards;
+    protected List<Step> habitScorecards = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
 	protected List<Membership> memberships = new ArrayList<>();

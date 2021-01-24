@@ -1,5 +1,6 @@
 package tribe.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -26,10 +27,10 @@ public class HabitStack {
     protected System system;
     
     @OneToMany(mappedBy = "habitStack", cascade = CascadeType.ALL)
-    protected List<Progression> progressions;
+    protected List<Progression> progressions = new ArrayList<>();
     
     @OneToMany(mappedBy = "habitStack", cascade = CascadeType.ALL)
-    protected List<Weekday> weekdays;
+    protected List<Weekday> weekdays = new ArrayList<>();
 
     public HabitStack() {}
 

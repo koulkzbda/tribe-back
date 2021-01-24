@@ -1,5 +1,6 @@
 package tribe.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,7 +25,7 @@ public class Progression extends HabitVersion {
 	protected HabitStack habitStack;
 	
 	@OneToMany(mappedBy = "progression", cascade = CascadeType.ALL)
-    protected List<Repetition> repetitions;
+    protected List<Repetition> repetitions = new ArrayList<>();
 	
 	@OneToOne(cascade = CascadeType.ALL)
     protected Step preparationHabit;
@@ -34,6 +35,9 @@ public class Progression extends HabitVersion {
 	
 	@OneToOne(cascade = CascadeType.ALL)
     protected Step conditionningHabit;
+	
+	@OneToMany(mappedBy = "progression", cascade = CascadeType.ALL)
+	protected List<Metric> metrics = new ArrayList<>();
 	
     public Progression() {
     	super();
@@ -135,5 +139,13 @@ public class Progression extends HabitVersion {
 
 	public void setRepetitions(List<Repetition> repetitions) {
 		this.repetitions = repetitions;
+	}
+
+	public List<Metric> getMetrics() {
+		return metrics;
+	}
+
+	public void setMetrics(List<Metric> metrics) {
+		this.metrics = metrics;
 	}
 }

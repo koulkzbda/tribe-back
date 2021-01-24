@@ -37,7 +37,7 @@ public class Habit {
     protected List<Identity> identities = new ArrayList<>();
     
     @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL)
-    protected List<Progression> progressions;
+    protected List<Progression> progressions = new ArrayList<>();
 
     public Habit() {}
 

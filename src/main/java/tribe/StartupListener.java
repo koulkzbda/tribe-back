@@ -386,15 +386,66 @@ public class StartupListener {
 			progression1.setConditionningHabit(conditionningHabit1);
 			progression1.setReward(reward1);
 			
-			//  Create habitContracts
-			HabitContract habitContract1 = new HabitContract("2x20 Pompes par jour", "Acheter 1 pizza à Jonhny", progression1, user2);
-			progression1.setHabitContract(habitContract1);
-			
 			List<Progression> progressionList = new ArrayList<>();
 			progressionList.add(progression1);
 			habit1.setProgressions(progressionList);
 			
 			habitRepo.save(habit1);
+			
+				// Habit 2
+			List<Identity> identityList2 = new ArrayList<>();
+			identityList2.add(identity2);
+			
+			Habit habit2 = new Habit("Courir tous les jours", "Marathon en moins de 3h30", "Enfiler ses baskets", user1, identityList2);
+			
+			List<Habit> habitList2 = new ArrayList<>();
+			habitList2.add(habit2);
+			identity2.setHabits(habitList2);
+			identityList2.set(0, identity2);
+			habit2.setIdentities(identityList2);
+			
+			Location location2 = new Location("Moving", "Avenue de la gare, Résidence Naim", "Meknès", 50000, 33.89500f, -5.55472f, null);
+			Progression progression2 = new Progression("first version", true, location2, "V1.0", habit2, null, null);
+			location2.setHabitVersion(progression2);
+			progression2.setLocation(location2);
+			
+			Metric metric2 = new Metric("Temps", "min", true, null, progression2);
+			Metric metric3 = new Metric("Distance parcourue", "km", false, null, progression2);
+			
+			List<Metric> metrics2 = new ArrayList<>();
+			metrics2.add(metric2);
+			metrics2.add(metric3);
+			progression2.setMetrics(metrics2);
+			
+			List<Progression> progressionList2 = new ArrayList<>();
+			progressionList2.add(progression2);
+			habit2.setProgressions(progressionList2);
+			
+			habitRepo.save(habit2);
+			
+			Habit habit3 = new Habit("Douche froide tous les jours", "Un mental d'acier", "Enfiler ses baskets", user1, identityList2);
+			
+			List<Habit> habitList3 = new ArrayList<>();
+			habitList3.add(habit2);
+			habitList3.add(habit3);
+			identity2.setHabits(habitList3);
+			identityList2.set(0, identity2);
+			habit3.setIdentities(identityList2);
+			
+			Location location3 = new Location("A la maison", "Avenue des FAR", "Meknès", 50000, 33.89530f, -5.56472f, null);
+			Progression progression3 = new Progression("first version", true, location3, "V1.0", habit3, null, null);
+			location3.setHabitVersion(progression3);
+			progression3.setLocation(location3);
+			
+			List<Progression> progressionList3 = new ArrayList<>();
+			progressionList3.add(progression3);
+			habit3.setProgressions(progressionList3);
+			
+			habitRepo.save(habit3);
+			
+			//  Create habitContracts
+			HabitContract habitContract1 = new HabitContract("Se prendre en photo tous les jours dehors en tenue de sport", "Acheter 1 pizza à Jonhny", progression2, user2);
+			progression2.setHabitContract(habitContract1);
 			
 			//  Create HabitStacks
 			HabitStack habitStack1 = new HabitStack("Creator routine", system1, progressionList);
@@ -406,7 +457,7 @@ public class StartupListener {
 			
 			RepetitionStatus repetitionStatus1 = new RepetitionStatus(RepetitionStatusEnum.DONE);
 			
-			Metric metric1 = new Metric("Number of rep", true, null, progression1);
+			Metric metric1 = new Metric("Nombre de repétitions", "nb", true, null, progression1);
 			
 			List<MetricValue> metricValues1 = new ArrayList<>();
 			MetricValue metricValue1 = new MetricValue(2f, metric1, null);
@@ -441,6 +492,48 @@ public class StartupListener {
 			habitStack1.setWeekdays(weekdays);
 			
 			habitStackRepo.save(habitStack1);
+			
+			RepetitionStatus repetitionStatus2 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			RepetitionStatus repetitionStatus3 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			
+			Repetition repetition2 = new Repetition(repetitionStatus2, progression2, null);
+			Repetition repetition3 = new Repetition(repetitionStatus3, progression3, null);
+			
+			List<Repetition> repetitions2 = new ArrayList<>();
+			repetitions2.add(repetition2);
+			List<Repetition> repetitions3 = new ArrayList<>();
+			repetitions2.add(repetition3);
+			
+			progression2.setRepetitions(repetitions2);
+			progression3.setRepetitions(repetitions3);
+			
+			List<Progression> progressionList4 = new ArrayList<>();
+			progressionList4.add(progression2);
+			progressionList4.add(progression3);
+			
+			HabitStack habitStack2 = new HabitStack("Morning routine", system1, progressionList4);
+			progression2.setHabitStack(habitStack2);
+			progression3.setHabitStack(habitStack2);
+			
+			Weekday weekday4 = new Weekday(habitStack2, WeekdayEnum.MONDAY, LocalTime.now());
+			Weekday weekday5 = new Weekday(habitStack2, WeekdayEnum.THUESDAY, LocalTime.now());
+			Weekday weekday6 = new Weekday(habitStack2, WeekdayEnum.WEDNESDAY, LocalTime.now());
+			Weekday weekday7 = new Weekday(habitStack2, WeekdayEnum.THRUSDAY, LocalTime.now());
+			Weekday weekday8 = new Weekday(habitStack2, WeekdayEnum.FRIDAY, LocalTime.now());
+			Weekday weekday9 = new Weekday(habitStack2, WeekdayEnum.SATURDAY, LocalTime.now());
+			Weekday weekday10 = new Weekday(habitStack2, WeekdayEnum.SUNDAY, LocalTime.now());
+			
+			List<Weekday> weekdays2 = new ArrayList<>();
+			weekdays.add(weekday4);
+			weekdays.add(weekday5);
+			weekdays.add(weekday6);
+			weekdays.add(weekday7);
+			weekdays.add(weekday8);
+			weekdays.add(weekday9);
+			weekdays.add(weekday10);
+			habitStack2.setWeekdays(weekdays2);
+			
+			habitStackRepo.save(habitStack2);
 			
 			//  Create HabitScorecards
 			Location lit = new Location("Lit de la maison", null, null, null, null, null, null);

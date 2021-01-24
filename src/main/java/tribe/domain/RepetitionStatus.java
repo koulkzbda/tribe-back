@@ -1,5 +1,7 @@
 package tribe.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -7,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import tribe.domain.enumaration.RepetitionStatusEnum;
 
@@ -17,6 +20,9 @@ public class RepetitionStatus {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	protected String id;
+	
+	@UpdateTimestamp
+    protected LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private RepetitionStatusEnum repetitionStatus;
@@ -42,5 +48,13 @@ public class RepetitionStatus {
 
 	public void setRepetitionStatus(RepetitionStatusEnum repetitionStatus) {
 		this.repetitionStatus = repetitionStatus;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 }
