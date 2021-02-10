@@ -26,7 +26,12 @@ public class RepetitionDto extends PublicationDto {
 		}
 		this.repetitionStatus = repetition.getRepetitionStatus().getRepetitionStatus().name();
 		this.repetitionStatusId = repetition.getRepetitionStatus().getId();
-		this.metrics = repetition.getMetricValues().stream().map(MetricValueDto::new).collect(Collectors.toList());
+		if (  repetition.getMetricValues().size() > 0) {
+			this.metrics = repetition.getMetricValues().stream().map(MetricValueDto::new).collect(Collectors.toList());
+		} else {
+			this.metrics = repetition.getProgression().getMetrics().stream().map(MetricValueDto::new).collect(Collectors.toList());
+		}
+		
 	}
 
 	public RepetitionDto(String id, String content, Integer nbLikes, Integer nbComments,

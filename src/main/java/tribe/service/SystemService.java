@@ -22,14 +22,14 @@ public class SystemService {
 		this.securityService = securityService;
 	}
 
-	public List<tribe.domain.System> findSystemByConnectedMember() {
-		LocalDateTime today = LocalDate.now().atTime(0, 0);
-		return systemRepo
-				.findWithHabitStacksByMemberId(
-						memberRepo.findByEmail(securityService.getUserEmail()).get().getId(),
-						today
-						);
-
-	}
+//	public List<tribe.domain.System> findSystemByConnectedMember() {
+//		LocalDateTime today = LocalDate.now().atTime(0, 0);
+//		
+//		return systemRepo
+//				.findWithHabitStacksByMemberId(
+//						memberRepo.findByEmail(securityService.getUserEmail()).get().getId(),
+//						);
+//
+//	}
 
 }

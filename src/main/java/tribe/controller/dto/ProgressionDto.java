@@ -29,7 +29,7 @@ public class ProgressionDto {
 	
 	protected StepDto preparationHabit;
 	
-	protected StepDto contioningStep;
+	protected StepDto conditioningStep;
 	
 	protected StepDto reward;
 	
@@ -48,7 +48,7 @@ public class ProgressionDto {
 			this.preparationHabit = new StepDto(progression.getPreparationHabit());
 		}
 		if ( progression.getConditionningHabit() != null ) {
-			this.contioningStep = new StepDto(progression.getConditionningHabit());
+			this.conditioningStep = new StepDto(progression.getConditionningHabit());
 		}
 		if ( progression.getReward() != null ) {
 			this.reward = new StepDto(progression.getReward());
@@ -62,6 +62,9 @@ public class ProgressionDto {
 				});
 			});
 			identityCategories.stream().distinct().collect(Collectors.toList());
+		}
+		if (progression.getHabitContract() != null) {
+			this.habitContract = new HabitContractDto(progression.getHabitContract());
 		}
 		//  TO DO nbCompleted
 	}
@@ -153,11 +156,11 @@ public class ProgressionDto {
 	}
 
 	public StepDto getContioningStep() {
-		return contioningStep;
+		return conditioningStep;
 	}
 
 	public void setContioningStep(StepDto contioningStep) {
-		this.contioningStep = contioningStep;
+		this.conditioningStep = contioningStep;
 	}
 
 	public StepDto getReward() {

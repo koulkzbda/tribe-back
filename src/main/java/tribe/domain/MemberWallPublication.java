@@ -21,7 +21,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Publication {
+public class MemberWallPublication {
 
 	@Id
 	@GeneratedValue(generator = "uuid")
@@ -47,7 +47,7 @@ public class Publication {
     @JoinColumn( name = "member_id")
     protected Member author;
     
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "publication")
 	protected List<Like> likes = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publication")
@@ -57,9 +57,9 @@ public class Publication {
     @JoinColumn
 	protected ReactionNotification reactionNotification;
 
-    public Publication() {}
+    public MemberWallPublication() {}
     
-    public Publication(String content, PublicationPictures publicationPictures, Member author,
+    public MemberWallPublication(String content, PublicationPictures publicationPictures, Member author,
     		List<Like> likes, List<CommentOfPublication> commentsOfPublication, ReactionNotification reactionNotification) {
     	this.content = content;
     	this.publicationPictures = publicationPictures;
@@ -69,7 +69,7 @@ public class Publication {
     	this.reactionNotification = reactionNotification;
     }
     
-    public Publication(String content, PublicationPictures publicationPictures, Member author,
+    public MemberWallPublication(String content, PublicationPictures publicationPictures, Member author,
 			List<Like> likes, List<CommentOfPublication> commentsOfPublication) {
 		this.content = content;
 		this.publicationPictures = publicationPictures;
@@ -78,7 +78,7 @@ public class Publication {
 		this.commentsOfPublication = commentsOfPublication;
 	}
 
-	public Publication(String content, PublicationPictures publicationPictures, Member author,
+	public MemberWallPublication(String content, PublicationPictures publicationPictures, Member author,
 			List<Like> likes) {
 		this.content = content;
 		this.publicationPictures = publicationPictures;

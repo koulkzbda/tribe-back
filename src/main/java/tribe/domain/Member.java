@@ -143,6 +143,10 @@ public class Member {
 		this.systems = systems;
 		this.habitContracts = habitContracts;
 	}
+	
+	public String getName() {
+		return firstName + ' ' + lastName;
+	}
 
 	public String getId() {
 		return id;

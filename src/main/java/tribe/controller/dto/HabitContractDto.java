@@ -1,5 +1,7 @@
 package tribe.controller.dto;
 
+import tribe.domain.HabitContract;
+
 public class HabitContractDto {
 
 	protected String id;
@@ -13,6 +15,16 @@ public class HabitContractDto {
 	protected String accountablePartnerName;
 	
 	public HabitContractDto() {}
+	
+	public HabitContractDto(HabitContract habitContract) {
+		this.id = habitContract.getId();
+		this.commitment = habitContract.getCommitment();
+		this.punishment = habitContract.getPunishment();
+		if (habitContract.getAccountabilityPartner() != null) {
+			this.accountablePartnerId = habitContract.getAccountabilityPartner().getId();
+			this.accountablePartnerName = habitContract.getAccountabilityPartner().getName();
+		}
+	}
 
 	public HabitContractDto(String id, String commitment, String punishment, String accountablePartnerId,
 			String accountablePartnerName) {

@@ -32,6 +32,7 @@ import tribe.domain.MetricValue;
 import tribe.domain.NotificationStatus;
 import tribe.domain.Progression;
 import tribe.domain.Publication;
+import tribe.domain.PublicationPictures;
 import tribe.domain.ReactionNotification;
 import tribe.domain.Repetition;
 import tribe.domain.RepetitionStatus;
@@ -59,7 +60,6 @@ import tribe.repository.IdentityRepo;
 import tribe.repository.LikeRepo;
 import tribe.repository.MemberProfilePicturesRepo;
 import tribe.repository.MemberRepo;
-import tribe.repository.MembershipRepo;
 import tribe.repository.ProgressionRepo;
 import tribe.repository.PublicationRepo;
 import tribe.repository.StepRepo;
@@ -126,8 +126,8 @@ public class StartupListener {
 			// Creating users
 
 			Member user1 = new Member();
-			user1.setLastName("Admin");
-			user1.setFirstName("DEV");
+			user1.setLastName("Dev");
+			user1.setFirstName("Admin");
 			user1.setEmail("admin@dev.fr");
 			user1.setPass(passwordEncoder.encode("superpass"));
 			user1.setRoles(Arrays.asList(new RoleMember(user1, Role.ROLE_ADMIN), new RoleMember(user1, Role.ROLE_USER),
@@ -135,8 +135,8 @@ public class StartupListener {
 			this.memberRepo.save(user1);
 
 			Member user2 = new Member();
-			user2.setLastName("User");
-			user2.setFirstName("DEV");
+			user2.setLastName("Dev");
+			user2.setFirstName("Member");
 			user2.setEmail("user@dev.fr");
 			user2.setPass(passwordEncoder.encode("superpass"));
 			user2.setRoles(Arrays.asList(new RoleMember(user2, Role.ROLE_USER)));
@@ -229,6 +229,8 @@ public class StartupListener {
 			
 			
 			Publication publication1 = new Publication("First contribution", null, user2, null);
+			PublicationPictures publicationPictures1 = new PublicationPictures(null, publication1);
+			publication1.setPublicationPictures(publicationPictures1);
 			like1.setPublication(publication1);
 			likes1.add(like1);
 			publication1.setLikes(likes1);
@@ -423,7 +425,7 @@ public class StartupListener {
 			
 			habitRepo.save(habit2);
 			
-			Habit habit3 = new Habit("Douche froide tous les jours", "Un mental d'acier", "Enfiler ses baskets", user1, identityList2);
+			Habit habit3 = new Habit("Douche froide tous les jours", "Un mental d'acier", "Se mettre sous la douche", user1, identityList2);
 			
 			List<Habit> habitList3 = new ArrayList<>();
 			habitList3.add(habit2);
@@ -465,6 +467,8 @@ public class StartupListener {
 			
 			
 			Repetition repetition1 = new Repetition("Izi pizi", null, user1, null, repetitionStatus1, progression1, null);
+			PublicationPictures publicationPictures2 = new PublicationPictures(null, repetition1);
+			repetition1.setPublicationPictures(publicationPictures2);
 			metricValue1.setRepetition(repetition1);
 			metricValue1.setMetric(metric1);
 			metricValues1.add(metricValue1);
@@ -498,6 +502,10 @@ public class StartupListener {
 			
 			Repetition repetition2 = new Repetition(repetitionStatus2, progression2, null);
 			Repetition repetition3 = new Repetition(repetitionStatus3, progression3, null);
+			PublicationPictures publicationPictures3 = new PublicationPictures(null, repetition2);
+			repetition2.setPublicationPictures(publicationPictures3);
+			PublicationPictures publicationPictures4 = new PublicationPictures(null, repetition3);
+			repetition3.setPublicationPictures(publicationPictures4);
 			
 			List<Repetition> repetitions2 = new ArrayList<>();
 			repetitions2.add(repetition2);
@@ -516,9 +524,9 @@ public class StartupListener {
 			progression3.setHabitStack(habitStack2);
 			
 			Weekday weekday4 = new Weekday(habitStack2, WeekdayEnum.MONDAY, LocalTime.now());
-			Weekday weekday5 = new Weekday(habitStack2, WeekdayEnum.THUESDAY, LocalTime.now());
+			Weekday weekday5 = new Weekday(habitStack2, WeekdayEnum.TUESDAY, LocalTime.now());
 			Weekday weekday6 = new Weekday(habitStack2, WeekdayEnum.WEDNESDAY, LocalTime.now());
-			Weekday weekday7 = new Weekday(habitStack2, WeekdayEnum.THRUSDAY, LocalTime.now());
+			Weekday weekday7 = new Weekday(habitStack2, WeekdayEnum.THURSDAY, LocalTime.now());
 			Weekday weekday8 = new Weekday(habitStack2, WeekdayEnum.FRIDAY, LocalTime.now());
 			Weekday weekday9 = new Weekday(habitStack2, WeekdayEnum.SATURDAY, LocalTime.now());
 			Weekday weekday10 = new Weekday(habitStack2, WeekdayEnum.SUNDAY, LocalTime.now());
