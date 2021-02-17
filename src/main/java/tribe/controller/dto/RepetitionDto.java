@@ -26,7 +26,7 @@ public class RepetitionDto extends PublicationDto {
 		}
 		this.repetitionStatus = repetition.getRepetitionStatus().getRepetitionStatus().name();
 		this.repetitionStatusId = repetition.getRepetitionStatus().getId();
-		if (  repetition.getMetricValues().size() > 0) {
+		if (  repetition.getMetricValues() != null && repetition.getMetricValues().size() > 0) {
 			this.metrics = repetition.getMetricValues().stream().map(MetricValueDto::new).collect(Collectors.toList());
 		} else {
 			this.metrics = repetition.getProgression().getMetrics().stream().map(MetricValueDto::new).collect(Collectors.toList());

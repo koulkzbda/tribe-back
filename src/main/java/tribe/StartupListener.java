@@ -1,5 +1,7 @@
 package tribe;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -488,32 +490,36 @@ public class StartupListener {
 			Weekday weekday1 = new Weekday(habitStack1, WeekdayEnum.WEDNESDAY, LocalTime.now());
 			Weekday weekday2 = new Weekday(habitStack1, WeekdayEnum.MONDAY, LocalTime.now());
 			Weekday weekday3 = new Weekday(habitStack1, WeekdayEnum.FRIDAY, LocalTime.now());
+			Weekday weekday11 = new Weekday(habitStack1, WeekdayEnum.TUESDAY, LocalTime.now());
 			
 			List<Weekday> weekdays = new ArrayList<>();
 			weekdays.add(weekday1);
 			weekdays.add(weekday2);
 			weekdays.add(weekday3);
+			weekdays.add(weekday11);
 			habitStack1.setWeekdays(weekdays);
 			
 			habitStackRepo.save(habitStack1);
 			
-			RepetitionStatus repetitionStatus2 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
-			RepetitionStatus repetitionStatus3 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			// Create Repetition
 			
-			Repetition repetition2 = new Repetition(repetitionStatus2, progression2, null);
-			Repetition repetition3 = new Repetition(repetitionStatus3, progression3, null);
-			PublicationPictures publicationPictures3 = new PublicationPictures(null, repetition2);
-			repetition2.setPublicationPictures(publicationPictures3);
-			PublicationPictures publicationPictures4 = new PublicationPictures(null, repetition3);
-			repetition3.setPublicationPictures(publicationPictures4);
-			
-			List<Repetition> repetitions2 = new ArrayList<>();
-			repetitions2.add(repetition2);
-			List<Repetition> repetitions3 = new ArrayList<>();
-			repetitions2.add(repetition3);
-			
-			progression2.setRepetitions(repetitions2);
-			progression3.setRepetitions(repetitions3);
+//			RepetitionStatus repetitionStatus2 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+//			RepetitionStatus repetitionStatus3 = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+//			
+//			Repetition repetition2 = new Repetition(repetitionStatus2, progression2, null);
+//			Repetition repetition3 = new Repetition(repetitionStatus3, progression3, null);
+//			PublicationPictures publicationPictures3 = new PublicationPictures(null, repetition2);
+//			repetition2.setPublicationPictures(publicationPictures3);
+//			PublicationPictures publicationPictures4 = new PublicationPictures(null, repetition3);
+//			repetition3.setPublicationPictures(publicationPictures4);
+//			
+//			List<Repetition> repetitions2 = new ArrayList<>();
+//			repetitions2.add(repetition2);
+//			List<Repetition> repetitions3 = new ArrayList<>();
+//			repetitions2.add(repetition3);
+//			
+//			progression2.setRepetitions(repetitions2);
+//			progression3.setRepetitions(repetitions3);
 			
 			List<Progression> progressionList4 = new ArrayList<>();
 			progressionList4.add(progression2);

@@ -1,0 +1,145 @@
+package tribe.service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import tribe.controller.dto.ErrorCode;
+import tribe.controller.dto.ErrorMessageDto;
+import tribe.controller.dto.PictureDto;
+import tribe.domain.MemberProfile;
+import tribe.domain.MemberProfilePictures;
+import tribe.domain.Picture;
+import tribe.exception.InvalidPictureException;
+import tribe.exception.NoMemberFoundException;
+import tribe.exception.NoPicturesFoundException;
+import tribe.exception.NoProfileFoundException;
+import tribe.repository.MemberProfilePicturesRepo;
+import tribe.repository.MemberProfileRepo;
+import tribe.repository.MemberRepo;
+import tribe.repository.PictureRepo;
+
+@Service
+public class ProfilePicturesService {
+
+	protected MemberRepo memberRepo;
+	protected MemberProfileRepo memberProfileRepo;
+	protected MemberProfilePicturesRepo memberProfilePicturesRepo;
+	protected PictureRepo pictureRepo;
+	protected SecurityServiceImpl securityService;
+
+	public ProfilePicturesService(MemberRepo memberRepo, MemberProfileRepo memberProfileRepo, MemberProfilePicturesRepo memberProfilePicturesRepo,
+			PictureRepo pictureRepo, SecurityServiceImpl securityService) {
+		this.memberRepo = memberRepo;
+		this.memberProfileRepo = memberProfileRepo;
+		this.securityService = securityService;
+		this.memberProfilePicturesRepo = memberProfilePicturesRepo;
+		this.pictureRepo = pictureRepo;
+	}
+
+	@Transactional
+	public List<PictureDto> addProfilePictures(MultipartFile[] files, String profileId, String profilePictureName)
+			throws IOException, NoSuchElementException {
+
+		MemberProfilePictures pictures = this.memberProfilePicturesRepo.findByMemberProfileId(profileId)
+				.orElseThrow(() -> new NoPicturesFoundException("profile", profileId));
+		MemberProfile profile = this.memberProfileRepo.findById(profileId).orElseThrow(NoProfileFoundException::new);
+		List<Picture> picturesList = new ArrayList<Picture>();
+
+		for (int i = 0; i < files.length; i++) {
+			String fileName = StringUtils.cleanPath(files[i].getOriginalFilename());
+			Picture picture = new Picture(fileName, files[i].getContentType(), files[i].getBytes());
+			picture.setPictures(pictures);
+			if (fileName.equals(profilePictureName)) {
+				profile.getProfilePictures().getPictures().stream().forEach(pict -> pict.setIsHeadlinePicture(false));
+				picture.setIsHeadlinePicture(true);
+			}
+			picturesList.add(picture);
+		}
+
+		pictures.addPictures(picturesList);
+		profile.setProfilePictures(pictures);
+
+		this.memberProfileRepo.save(profile);
+		
+		return getProfilePictures();
+
+	}
+
+	@Transactional
+	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws InvalidPictureException {
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
+				memberRepo.findByEmail(securityService.getUserEmail()
+						)
+				.orElseThrow(NoMemberFoundException::new)
+				.getId())
+				.orElseThrow(NoProfileFoundException::new);
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
+		
+		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureDto.getId())) ) {
+			pictures.stream().forEach(pict -> {
+				
+				pict.setIsHeadlinePicture(false);
+				if (pict.getId().equals(pictureDto.getId())) {
+					pict.setIsHeadlinePicture(true);
+				}
+			});
+		} else {
+			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+		}
+		
+		memberProfilePictures.setPictures(pictures);
+		profile.setProfilePictures(memberProfilePictures);
+		this.memberProfileRepo.save(profile);
+		
+		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
+	}
+	
+	public List<PictureDto> getProfilePictures() {
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
+				memberRepo.findByEmail(securityService.getUserEmail()
+						)
+				.orElseThrow(NoMemberFoundException::new)
+				.getId())
+				.orElseThrow(NoProfileFoundException::new);
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
+		
+		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
+	}
+	
+	@Transactional
+	public List<PictureDto> deleteProfilePicture(String id) throws InvalidPictureException {
+		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
+				memberRepo.findByEmail(securityService.getUserEmail()
+						)
+				.orElseThrow(NoMemberFoundException::new)
+				.getId())
+				.orElseThrow(NoProfileFoundException::new);
+		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
+		List<Picture> pictures = memberProfilePictures.getPictures();
+		
+		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(id)) ) {
+			this.pictureRepo.deleteById(id);
+			pictures = pictures.stream().filter(pict -> !pict.getId().equals(id)).collect(Collectors.toList());
+		} else {
+			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+		}
+		
+		memberProfilePictures.setPictures(pictures);
+		profile.setProfilePictures(memberProfilePictures);
+		this.memberProfileRepo.save(profile);
+		
+		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
+	}
+
+}

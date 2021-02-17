@@ -1,117 +1,135 @@
 package tribe.service;
 
-import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import tribe.controller.dto.ErrorCode;
-import tribe.controller.dto.ErrorMessageDto;
-import tribe.controller.dto.PictureDto;
-import tribe.domain.Picture;
+import tribe.controller.dto.MetricValueFeedbuzzUpdateDto;
+import tribe.controller.dto.RepetitionFeedbuzzUpdateDto;
+import tribe.domain.Member;
+import tribe.domain.Metric;
+import tribe.domain.MetricValue;
+import tribe.domain.Progression;
 import tribe.domain.PublicationPictures;
 import tribe.domain.Repetition;
-import tribe.exception.InvalidPictureException;
+import tribe.domain.RepetitionStatus;
+import tribe.domain.enumaration.RepetitionStatusEnum;
+import tribe.domain.enumaration.WeekdayEnum;
+import tribe.repository.MetricRepo;
 import tribe.repository.PictureRepo;
+import tribe.repository.ProgressionRepo;
 import tribe.repository.PublicationPicturesRepo;
 import tribe.repository.RepetitionRepo;
 
-@Service//  TO DO
+@Service
 public class RepetitionService {
 
 	protected RepetitionRepo repetitionRepo;
 	protected PublicationPicturesRepo publicationPicturesRepo;
+	protected MetricRepo metricRepo;
 	protected PictureRepo pictureRepo;
+	protected ProgressionRepo progressionRepo;
 
 	public RepetitionService(RepetitionRepo repetitionRepo, PublicationPicturesRepo publicationPicturesRepo,
-			PictureRepo pictureRepo) {
+			PictureRepo pictureRepo, MetricRepo metricRepo, ProgressionRepo progressionRepo) {
 		this.repetitionRepo = repetitionRepo;
 		this.publicationPicturesRepo = publicationPicturesRepo;
 		this.pictureRepo = pictureRepo;
+		this.metricRepo = metricRepo;
+		this.progressionRepo = progressionRepo;
 	}
-
+	
 	@Transactional
-	public List<PictureDto> addPublicationPictures(MultipartFile[] files, String publicationId, String profilePictureName)
-			throws IOException, NoSuchElementException {
-
-		PublicationPictures pictures = this.publicationPicturesRepo.findByPublicationId(publicationId).get();
-		Repetition repetition = this.repetitionRepo.findById(publicationId).get();
-		List<Picture> picturesList = new ArrayList<Picture>();
-
-		for (int i = 0; i < files.length; i++) {
-			String fileName = StringUtils.cleanPath(files[i].getOriginalFilename());
-			Picture picture = new Picture(fileName, files[i].getContentType(), files[i].getBytes());
-			picture.setPictures(pictures);
-			if (fileName.equals(profilePictureName)) {
-				repetition.getPublicationPictures().getPictures().stream().forEach(pict -> pict.setIsHeadlinePicture(false));
-				picture.setIsHeadlinePicture(true);
+	public RepetitionFeedbuzzUpdateDto updateRepetition(RepetitionFeedbuzzUpdateDto repetitionDto) {
+		Repetition repetition = repetitionRepo.findByIdWithMetrics(repetitionDto.getId())
+				.get();
+		
+		RepetitionStatus repetitionStatus = repetition.getRepetitionStatus();
+		repetitionStatus.setRepetitionStatus(RepetitionStatusEnum.valueOfLabel(repetitionDto.getRepetitionStatus()));
+		repetition.setRepetitionStatus(repetitionStatus);
+		
+		repetition.setContent(repetitionDto.getContent());
+		
+		repetitionRepo.save(repetition);
+		
+		List<Metric> metrics = new ArrayList<>(repetition.getProgression().getMetrics());
+		List<MetricValueFeedbuzzUpdateDto> metricValuesDto = repetitionDto.getMetricValues();
+		
+		Set<Float> metricsSet = new HashSet<>(metrics.stream().map(metric -> {
+			if (metric.getMetricValue() != null && metric.getMetricValue().getValue() != null) {
+				return  metric.getMetricValue().getValue();
 			}
-			picturesList.add(picture);
-		}
-
-		pictures.addPictures(picturesList);
-		repetition.setPublicationPictures(pictures);
-
-		this.repetitionRepo.save(repetition);
+			
+			return 0f;
+		}).collect(Collectors.toList()));
+		Set<Float> metricValuesDtoSet = new HashSet<>(metricValuesDto.stream().map(metricValueDto -> metricValueDto.getValue()).collect(Collectors.toList()));
 		
-		return getPublicationPictures(publicationId);
-
-	}
-
-	@Transactional
-	public List<PictureDto> setHeadlinePicture(PictureDto pictureDto, String publicationId) throws InvalidPictureException {
-		
-		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId).get();
-		List<Picture> pictures = publicationPictures.getPictures();
-		
-		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureDto.getId())) ) {
-			pictures.stream().forEach(pict -> {
-				
-				pict.setIsHeadlinePicture(false);
-				if (pict.getId().equals(pictureDto.getId())) {
-					pict.setIsHeadlinePicture(true);
+		if ( !metricsSet.equals(metricValuesDtoSet) ) {
+			metrics.stream().forEach(metric -> {
+				List<MetricValueFeedbuzzUpdateDto> metricValueDtos = metricValuesDto.stream().filter(metricValueDto -> 
+				metricValueDto.getMetricId().equals(metric.getId())
+						).filter(distinctByKey(m -> m.getMetricName())).collect(Collectors.toList());
+				if (metricValueDtos.size() > 0) {
+					MetricValue metricValue = new MetricValue(metricValueDtos.get(0).getValue(), metric, repetition);
+					metric.setMetricValue(metricValue);
 				}
 			});
-		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			
+			metricRepo.saveAll(metrics);
 		}
 		
-		publicationPictures.setPictures(pictures);
-		publicationPicturesRepo.save(publicationPictures);
-		
-		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
-	}
-	
-	public List<PictureDto> getPublicationPictures(String publicationId) {
-		List<Picture> pictures = this.publicationPicturesRepo.findByPublicationId(publicationId).get().getPictures();
-		
-		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
+		return repetitionDto;
 	}
 	
 	@Transactional
-	public List<PictureDto> deletePicture(String publicationId, String pictureId) throws InvalidPictureException {
+	public void updateRepetitionsForToday(Member member, WeekdayEnum weekdayEnum) {
+		List<Progression> progressions = progressionRepo.findByMemberIdAndWeekday(member.getId(), weekdayEnum);
+		progressions.stream().forEach(progression -> {
+			RepetitionStatus repetitionStatus = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			
+			Repetition repetition = new Repetition(repetitionStatus, progression, null);
+			PublicationPictures publicationPictures = new PublicationPictures(new ArrayList<>(), repetition);
+			repetition.setPublicationPictures(publicationPictures);
+			repetition.setAuthor(member);
+			progression.addRepetition(repetition);
+			
+			progressionRepo.save(progression);
+		});
 		
-		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId).get();
-		List<Picture> pictures = publicationPictures.getPictures();
 		
-		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureId)) ) {
-			this.pictureRepo.deleteById(pictureId);
-			pictures = pictures.stream().filter(pict -> !pict.getId().equals(pictureId)).collect(Collectors.toList());
-		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
-		}
-		
-		publicationPictures.setPictures(pictures);
-		publicationPicturesRepo.save(publicationPictures);
-		
-		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
+	
+	@Transactional
+	public void updateRepetitionsForYesterday(Member member, WeekdayEnum yesterdayEnum) {
+		LocalDateTime today = LocalDate.now().atTime(0, 0);
+		LocalDateTime yesterday = today.minusDays(1);
+		
+		List<Repetition> repetitions = repetitionRepo.findNotDoneYesterday(member.getId(), yesterdayEnum, RepetitionStatusEnum.TO_DO, today, yesterday);
+		repetitions.forEach(repetition -> {
+			RepetitionStatus repetitionStatus = repetition.getRepetitionStatus();
+			repetitionStatus.setRepetitionStatus(RepetitionStatusEnum.NOT_DONE);
+			repetition.setRepetitionStatus(repetitionStatus);
+			repetitionRepo.save(repetition);
+		});
+	}
+	
+	public static <T> Predicate<T> distinctByKey(
+		    Function<? super T, ?> keyExtractor) {
+		  
+		    Map<Object, Boolean> seen = new ConcurrentHashMap<>(); 
+		    return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null; 
+		}
 
 }

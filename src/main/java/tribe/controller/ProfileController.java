@@ -25,6 +25,7 @@ import tribe.controller.dto.PictureDto;
 import tribe.controller.dto.ProfileDto;
 import tribe.exception.InvalidPictureException;
 import tribe.exception.InvalidProfileException;
+import tribe.service.ProfilePicturesService;
 import tribe.service.ProfileService;
 
 @RestController
@@ -32,9 +33,11 @@ import tribe.service.ProfileService;
 public class ProfileController {
 
 	protected ProfileService profileService;
+	protected ProfilePicturesService profilePicturesService;
 
-	public ProfileController(ProfileService profileService) {
+	public ProfileController(ProfileService profileService, ProfilePicturesService profilePicturesService) {
 		this.profileService = profileService;
+		this.profilePicturesService = profilePicturesService;
 	}
 
 	@GetMapping
@@ -47,7 +50,7 @@ public class ProfileController {
 			@RequestParam("profileId") String profileId, @RequestParam(defaultValue = "-1") String profilePictureName)
 			throws IOException, NoSuchElementException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.addProfilePictures(files, profileId, profilePictureName));
+		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.addProfilePictures(files, profileId, profilePictureName));
 
 	}
 	
@@ -66,13 +69,13 @@ public class ProfileController {
 			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, "Photo de profil invalide"));
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.setProfilePicture(pictureDto));
+		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.setProfilePicture(pictureDto));
 	}
 	
 	@DeleteMapping("/picture/{id}")
 	public ResponseEntity<?> deleteProfilePicture(@PathVariable String id) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.deleteProfilePicture(id));
+		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.deleteProfilePicture(id));
 	}
 
 }

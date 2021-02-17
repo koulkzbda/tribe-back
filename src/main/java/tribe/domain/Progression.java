@@ -76,6 +76,10 @@ public class Progression extends HabitVersion {
 		this.habitContract = habitContract;
 		this.habitStack = habitStack;
 	}
+	
+	public void addRepetition(Repetition repetition) {
+		this.repetitions.add(repetition);
+	}
 
 	public String getVersionName() {
 		return versionName;

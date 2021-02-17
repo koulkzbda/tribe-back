@@ -31,6 +31,8 @@ public class Member {
     
     protected LocalDateTime registeredAt;
     
+    protected LocalDateTime nextUpdateRepetition;
+    
     @OneToOne(cascade = CascadeType.ALL)
     protected MemberProfile memberProfile;
     
@@ -194,6 +196,14 @@ public class Member {
 
 	public void setRegisteredAt(LocalDateTime registeredAt) {
 		this.registeredAt = registeredAt;
+	}
+
+	public LocalDateTime getNextUpdateRepetition() {
+		return nextUpdateRepetition;
+	}
+
+	public void setNextUpdateRepetition(LocalDateTime nextUpdateRepetition) {
+		this.nextUpdateRepetition = nextUpdateRepetition;
 	}
 
 	public MemberProfile getMemberProfile() {

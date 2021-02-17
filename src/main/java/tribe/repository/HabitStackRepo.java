@@ -20,7 +20,7 @@ public interface HabitStackRepo extends JpaRepository<HabitStack, String> {
 			+ "left join h.identities i "
 			+ "left join i.weightings w "
 			+ "left join w.identityCategory ic "
-			+ "join p.habitContract hc "
+			+ "left join p.habitContract hc "
 			+ "left join p.location l "
 			+ "left join p.metrics metrics "
 			+ "join p.repetitions r "
