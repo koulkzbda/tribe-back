@@ -24,6 +24,7 @@ public class ProfileService {
 		this.securityService = securityService;
 	}
 
+	@Transactional
 	public ProfileDto findByConnectedMember() {
 		return new ProfileDto(memberProfileRepo
 				.findEagerByMemberId(memberRepo.findByEmail(securityService.getUserEmail())

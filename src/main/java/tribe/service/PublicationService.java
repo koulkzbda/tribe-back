@@ -98,6 +98,7 @@ public class PublicationService {
 		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
 	
+	@Transactional
 	public List<PictureDto> getProfilePictures() {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()

@@ -1,6 +1,7 @@
 package tribe.security;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -84,5 +86,22 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
         authCookie.setPath("/");
         response.addCookie(authCookie);
         LOG.info("JWT Token generated and set in HTTP header and in a cookie");
+        addSameSiteCookieAttribute(response);
     }
+    
+    private void addSameSiteCookieAttribute(HttpServletResponse response) {
+        Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
+        boolean firstHeader = true;
+        // there can be multiple Set-Cookie attributes
+        for (String header : headers) {
+            if (firstHeader) {
+                response.setHeader(HttpHeaders.SET_COOKIE,
+                        String.format("%s; %s", header, "SameSite=Strict"));
+                firstHeader = false;
+                continue;
+            }
+            response.addHeader(HttpHeaders.SET_COOKIE,
+                    String.format("%s; %s", header, "SameSite=Strict"));
+        }
+}
 }

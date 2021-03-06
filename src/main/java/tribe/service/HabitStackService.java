@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.ErrorCode;
@@ -37,6 +39,7 @@ public class HabitStackService {
 		this.weekdayUtil = weekdayUtil;
 	}
 
+	@Transactional
 	public List<FeedbuzzDto> findByConnectedMember() {
 		LocalDateTime today = LocalDate.now().atTime(0, 0);
 		String day = LocalDate.now().getDayOfWeek().name();
