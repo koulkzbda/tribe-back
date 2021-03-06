@@ -97,12 +97,12 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
         for (String header : headers) {
             if (firstHeader) {
                 response.setHeader(HttpHeaders.SET_COOKIE,
-                        String.format("%s; %s", header, "SameSite=Strict"));
+                        String.format("%s; %s", header, "SameSite=None; Secure"));
                 firstHeader = false;
                 continue;
             }
             response.addHeader(HttpHeaders.SET_COOKIE,
-                    String.format("%s; %s", header, "SameSite=Strict"));
+                    String.format("%s; %s", header, "SameSite=None; Secure"));
         }
 }
 }
