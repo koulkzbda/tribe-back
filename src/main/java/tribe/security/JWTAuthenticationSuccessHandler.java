@@ -86,6 +86,7 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
         authCookie.setPath("/");
         response.addCookie(authCookie);
         LOG.info("JWT Token generated and set in HTTP header and in a cookie");
+        clearAuthenticationAttributes(request);
         addSameSiteCookieAttribute(response);
     }
     
