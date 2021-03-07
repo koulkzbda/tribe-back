@@ -41,7 +41,7 @@ public class HabitStackService {
 
 	@Transactional
 	public List<FeedbuzzDto> findByConnectedMember() {
-		LocalDateTime today = LocalDate.now().atTime(0, 0);
+		LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 1);
 		String day = LocalDate.now().getDayOfWeek().name();
 		WeekdayEnum weekdayEnum = weekdayUtil.getWeekdayEnum(day);
 		Member member = memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(() -> new NoMemberFoundException(new ErrorMessageDto(ErrorCode.SECURITY, "No member connected or inexisting member connected.")));
