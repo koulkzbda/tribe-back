@@ -1,6 +1,7 @@
 package tribe.controller.dto;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ public class FeedbuzzDto {
 	
 	protected String habitStackName;
 	
-	protected LocalTime time;
+	protected LocalDateTime time;
 	
 	protected Integer nbDays;
 
@@ -27,7 +28,7 @@ public class FeedbuzzDto {
 		if ( habitStack.getWeekdays().size() > 0 ) {
 			this.nbDays = habitStack.getWeekdays().size();
 			
-			this.time = habitStack.getWeekdays().get(0).getTime();
+			this.time = LocalDateTime.of(LocalDate.now(), habitStack.getWeekdays().get(0).getTime());
 		}
 		this.progressions = habitStack.getProgressions().stream().map(ProgressionDto::new).collect(Collectors.toList());
 	}
@@ -48,11 +49,11 @@ public class FeedbuzzDto {
 		this.habitStackName = habitStackName;
 	}
 
-	public LocalTime getTime() {
+	public LocalDateTime getTime() {
 		return time;
 	}
 
-	public void setTime(LocalTime time) {
+	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
 
