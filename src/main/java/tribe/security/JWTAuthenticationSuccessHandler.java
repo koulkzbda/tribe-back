@@ -35,74 +35,69 @@ import tribe.repository.MemberRepo;
 @Configuration
 public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JWTAuthenticationSuccessHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JWTAuthenticationSuccessHandler.class);
 
-    @Value("${jwt.expires_in}")
-    private Integer EXPIRES_IN;
+	@Value("${jwt.expires_in}")
+	private Integer EXPIRES_IN;
 
-    @Value("${jwt.cookie}")
-    private String TOKEN_COOKIE;
+	@Value("${jwt.cookie}")
+	private String TOKEN_COOKIE;
 
-    @Value("${jwt.secret}")
-    private String SECRET;
+	@Value("${jwt.secret}")
+	private String SECRET;
 
-    @Autowired
-    private MemberRepo memberRepo;
+	@Autowired
+	private MemberRepo memberRepo;
 
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
+	@Override
+	@Transactional
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
 
-    @Override
-    @Transactional
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+		LOG.info("JWT Token generating");
 
-        LOG.info("JWT Token generating");
+		User user = (User) authentication.getPrincipal();
 
-        User user = (User) authentication.getPrincipal();
+		String rolesList = user.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
 
-        String rolesList = user.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.joining(","));
+		tribe.domain.Member tribeUser = memberRepo.findByEmail(user.getUsername())
+				.orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
 
-        tribe.domain.Member tribeUser = memberRepo.findByEmail(user.getUsername()).orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
+		response.setContentType("application/json");
+		response.getWriter().write(mapper.writeValueAsString(new MemberDto(tribeUser)));
 
-        response.setContentType("application/json");
-        response.getWriter().write(mapper.writeValueAsString(new MemberDto(tribeUser)));
+		Map<String, Object> tokenInfos = new HashMap<>();
+		tokenInfos.put("roles", rolesList);
+		LOG.info("roles {} ", tokenInfos);
 
-        Map<String, Object> tokenInfos = new HashMap<>();
-        tokenInfos.put("roles", rolesList);
-        LOG.info("roles {} ", tokenInfos);
+		String jws = Jwts.builder().setSubject(user.getUsername()).addClaims(tokenInfos)
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
+				.signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET).compact();
 
-        String jws = Jwts.builder()
-                .setSubject(user.getUsername())
-                .addClaims(tokenInfos)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 1000))
-                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET)
-                .compact();
+		Cookie authCookie = new Cookie(TOKEN_COOKIE, (jws));
+		authCookie.setHttpOnly(true);
+		authCookie.setMaxAge(EXPIRES_IN * 1000);
+		authCookie.setPath("/");
+		response.addCookie(authCookie);
+		LOG.info("JWT Token generated and set in HTTP header and in a cookie");
+		clearAuthenticationAttributes(request);
+		addSameSiteCookieAttribute(response);
+	}
 
-        Cookie authCookie = new Cookie(TOKEN_COOKIE, (jws));
-        authCookie.setHttpOnly(true);
-        authCookie.setMaxAge(EXPIRES_IN * 1000);
-        authCookie.setPath("/");
-        response.addCookie(authCookie);
-        LOG.info("JWT Token generated and set in HTTP header and in a cookie");
-        clearAuthenticationAttributes(request);
-        addSameSiteCookieAttribute(response);
-    }
-    
-    private void addSameSiteCookieAttribute(HttpServletResponse response) {
-        Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
-        boolean firstHeader = true;
-        // there can be multiple Set-Cookie attributes
-        for (String header : headers) {
-            if (firstHeader) {
-                response.setHeader(HttpHeaders.SET_COOKIE,
-                        String.format("%s; %s", header, "SameSite=None; Secure"));
-                firstHeader = false;
-                continue;
-            }
-            response.addHeader(HttpHeaders.SET_COOKIE,
-                    String.format("%s; %s", header, "SameSite=None; Secure"));
-        }
-}
+	private void addSameSiteCookieAttribute(HttpServletResponse response) {
+		Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
+		boolean firstHeader = true;
+		// there can be multiple Set-Cookie attributes
+		for (String header : headers) {
+			if (firstHeader) {
+				response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Lax"));
+				firstHeader = false;
+				continue;
+			}
+			response.addHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Lax"));
+		}
+	}
 }
