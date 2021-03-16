@@ -15,6 +15,8 @@ public class MemberDto {
     protected String email;
 
     protected List<Role> roles;
+    
+    protected String token;
 
 	public MemberDto(String firstName, String lastName, String email, List<Role> roles) {
 		this.firstName = firstName;
@@ -28,6 +30,14 @@ public class MemberDto {
 		this.lastName = member.getLastName();
 		this.email = member.getEmail();
 		this.roles = member.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toList());
+	}
+	
+	public MemberDto(Member member, String token) {
+		this.firstName = member.getFirstName();
+		this.lastName = member.getLastName();
+		this.email = member.getEmail();
+		this.roles = member.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toList());
+		this.token = token;
 	}
 
 	public String getFirstName() {
@@ -60,6 +70,14 @@ public class MemberDto {
 
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
     
 }

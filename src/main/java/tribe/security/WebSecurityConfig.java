@@ -86,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // in case of successful validation of the form
                 // jwtAuthenticationSuccessHandler customizes the response to send
                 //     => JWT Token generated and set in HTTP header
-                //     => and in a cookie
+                //     => and in the response
                 .successHandler(jwtAuthenticationSuccessHandler)
                 // in case of failure, code 403 sent
                 .failureHandler((request, response, exception) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN))
@@ -94,13 +94,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 // Filter used to pass from the JWT token to a user connected in the Spring Security sense
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 // Logout management
                 // /POST /logout
                 .logout()
                 // if successful an OK response is sent (instead of a redirection to / login)
-                .logoutSuccessHandler((req, resp, auth) -> resp.setStatus(HttpServletResponse.SC_OK))
-                // authentication cookie deletion
-                .deleteCookies(TOKEN_COOKIE);
+                .logoutSuccessHandler((req, resp, auth) -> resp.setStatus(HttpServletResponse.SC_OK));
     }
 }
