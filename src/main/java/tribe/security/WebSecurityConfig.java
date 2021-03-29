@@ -31,6 +31,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
 
     private JWTAuthorizationFilter jwtAuthorizationFilter;
+    
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+            "/swagger-ui/**",
+            "/h2-console/**"
+    };
 
     public WebSecurityConfig(JWTAuthenticationSuccessHandler jwtAuthenticationSuccessHandler, JWTAuthorizationFilter jwtAuthorizationFilter) {
         this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
@@ -74,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint((request, response, authException) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN))
                 .and()
                 .authorizeRequests()
-                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 // login form generation
