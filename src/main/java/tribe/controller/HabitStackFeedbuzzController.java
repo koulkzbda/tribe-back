@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -37,51 +39,59 @@ public class HabitStackFeedbuzzController {
 	protected HabitStackService habitStackService;
 	protected RepetitionService repetitionService;
 	protected PublicationPicturesService publicationPicturesService;
+	protected MessageSource messageSource;
 
-	public HabitStackFeedbuzzController(HabitStackService habitStackService, RepetitionService repetitionService, PublicationPicturesService publicationPicturesService) {
+	public HabitStackFeedbuzzController(HabitStackService habitStackService, RepetitionService repetitionService,
+			PublicationPicturesService publicationPicturesService, MessageSource messageSource) {
 		this.habitStackService = habitStackService;
 		this.repetitionService = repetitionService;
 		this.publicationPicturesService = publicationPicturesService;
+		this.messageSource = messageSource;
 	}
 
-	
-	@GetMapping
+	@GetMapping(produces = "application/tribe-back-v1+json")
 	public ResponseEntity<List<FeedbuzzDto>> findByConnectedMember() {
 		return ResponseEntity.status(HttpStatus.OK).body(habitStackService.findByConnectedMember());
 	}
-	
-	@PatchMapping("/repetition")
-	public ResponseEntity<?> updateRepetition(@RequestBody @Valid RepetitionFeedbuzzUpdateDto repetition, BindingResult result) {
+
+	@PatchMapping(value = "/repetition", produces = "application/tribe-back-v1+json")
+	public ResponseEntity<?> updateRepetition(@RequestBody @Valid RepetitionFeedbuzzUpdateDto repetition,
+			BindingResult result) {
 		if (result.hasErrors()) {
-			throw new InvalidRepetitionFeedbuzzzException(new ErrorMessageDto(ErrorCode.VALIDATION, "Répétition invalide."));
+			throw new InvalidRepetitionFeedbuzzzException(
+					new ErrorMessageDto(ErrorCode.VALIDATION, "Répétition invalide."));
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(repetitionService.updateRepetition(repetition));
 	}
-	
-	@PostMapping("/repetition/pictures")
-	public ResponseEntity<?> addPublicationPictures(@RequestParam("files[]") MultipartFile[] files,
-			@RequestParam("publicationId") String publicationId, @RequestParam(defaultValue = "-1") String headlinePictureName)
-			throws IOException, NoSuchElementException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(publicationPicturesService.addPublicationPictures(files, publicationId, headlinePictureName));
+	@PostMapping(value = "/repetition/pictures", produces = "application/tribe-back-v1+json")
+	public ResponseEntity<?> addPublicationPictures(@RequestParam("files[]") MultipartFile[] files,
+			@RequestParam("publicationId") String publicationId,
+			@RequestParam(defaultValue = "-1") String headlinePictureName) throws IOException, NoSuchElementException {
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(publicationPicturesService.addPublicationPictures(files, publicationId, headlinePictureName));
 
 	}
-	
-	@PatchMapping("/repetition/headline-picture")
+
+	@PatchMapping(value = "/repetition/headline-picture", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> setProfilePicture(@RequestBody @Valid PictureDto pictureDto, BindingResult result,
 			@RequestParam("publicationId") String publicationId) {
 		if (result.hasErrors()) {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, "Photo de profil invalide"));
+			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(publicationPicturesService.setHeadlinePicture(pictureDto, publicationId));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(publicationPicturesService.setHeadlinePicture(pictureDto, publicationId));
 	}
-	
-	@DeleteMapping("/repetition/picture")
-	public ResponseEntity<?> deleteProfilePicture(@RequestParam("publicationId") String publicationId, @RequestParam("pictureId") String pictureId) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(publicationPicturesService.deletePicture(publicationId, pictureId));
+	@DeleteMapping(value = "/repetition/picture", produces = "application/tribe-back-v1+json")
+	public ResponseEntity<?> deleteProfilePicture(@RequestParam("publicationId") String publicationId,
+			@RequestParam("pictureId") String pictureId) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(publicationPicturesService.deletePicture(publicationId, pictureId));
 	}
 
 }

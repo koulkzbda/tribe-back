@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,14 +37,17 @@ public class PublicationPicturesService {
 	protected RepetitionRepo repetitionRepo;
 	protected PictureRepo pictureRepo;
 	protected SecurityServiceImpl securityService;
+	protected MessageSource messageSource;
 
+	@Autowired
 	public PublicationPicturesService(MemberRepo memberRepo, RepetitionRepo repetitionRepo, PublicationPicturesRepo publicationPicturesRepo,
-			PictureRepo pictureRepo, SecurityServiceImpl securityService) {
+			PictureRepo pictureRepo, SecurityServiceImpl securityService, MessageSource messageSource) {
 		this.memberRepo = memberRepo;
 		this.securityService = securityService;
 		this.repetitionRepo = repetitionRepo;
 		this.publicationPicturesRepo = publicationPicturesRepo;
 		this.pictureRepo = pictureRepo;
+		this.messageSource = messageSource;
 	}
 
 	@Transactional
@@ -90,7 +96,8 @@ public class PublicationPicturesService {
 				}
 			});
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			System.out.println(LocaleContextHolder.getLocale());
+			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
 		}
 		
 		publicationPictures.setPictures(pictures);
@@ -118,7 +125,7 @@ public class PublicationPicturesService {
 			this.pictureRepo.deleteById(pictureId);
 			pictures = pictures.stream().filter(pict -> !pict.getId().equals(pictureId)).collect(Collectors.toList());
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
 		}
 		
 		publicationPictures.setPictures(pictures);

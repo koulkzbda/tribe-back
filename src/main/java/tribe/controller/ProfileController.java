@@ -40,21 +40,22 @@ public class ProfileController {
 		this.profilePicturesService = profilePicturesService;
 	}
 
-	@GetMapping
+	@GetMapping(produces = "application/tribe-back-v1+json")
 	public ResponseEntity<ProfileDto> findByConnectedMember() {
 		return ResponseEntity.status(HttpStatus.OK).body(profileService.findByConnectedMember());
 	}
 
-	@PostMapping("/pictures")
+	@PostMapping(value = "/pictures", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> uploadFile(@RequestParam("files[]") MultipartFile[] files,
 			@RequestParam("profileId") String profileId, @RequestParam(defaultValue = "-1") String profilePictureName)
 			throws IOException, NoSuchElementException {
 
-		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.addProfilePictures(files, profileId, profilePictureName));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(profilePicturesService.addProfilePictures(files, profileId, profilePictureName));
 
 	}
-	
-	@PostMapping("/bio")
+
+	@PostMapping(value = "/bio", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> updateBio(@RequestBody ProfileDto profileDto, BindingResult result) {
 		if (result.hasErrors()) {
 			throw new InvalidProfileException(new ErrorMessageDto(ErrorCode.VALIDATION, "Profil invalide"));
@@ -63,7 +64,7 @@ public class ProfileController {
 		return ResponseEntity.status(HttpStatus.OK).body(profileService.updateBio(profileDto));
 	}
 
-	@PatchMapping("/profile-picture")
+	@PatchMapping(value = "/profile-picture", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> setProfilePicture(@RequestBody @Valid PictureDto pictureDto, BindingResult result) {
 		if (result.hasErrors()) {
 			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, "Photo de profil invalide"));
@@ -71,8 +72,8 @@ public class ProfileController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.setProfilePicture(pictureDto));
 	}
-	
-	@DeleteMapping("/picture/{id}")
+
+	@DeleteMapping(value = "/picture/{id}", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> deleteProfilePicture(@PathVariable String id) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.deleteProfilePicture(id));

@@ -126,7 +126,7 @@
 		<profile>
 			<id>dev</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
@@ -149,7 +149,7 @@
 		<profile>
 			<id>prod</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<jdbc.driver>org.postgresql.Driver</jdbc.driver>
