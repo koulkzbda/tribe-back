@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import tribe.controller.dto.ErrorMessageDto;
-import tribe.exception.InvalidRepetitionFeedbuzzzException;
 import tribe.exception.NoMemberFoundException;
 import tribe.exception.NoPublicationFoundException;
 
@@ -13,11 +12,6 @@ import tribe.exception.NoPublicationFoundException;
 @ControllerAdvice
 public class ErrorHandlerFeedbuzzControllerAdvice {
 
-	@ExceptionHandler(InvalidRepetitionFeedbuzzzException.class)
-	public ResponseEntity<ErrorMessageDto> whenInvalidRepetitionFeedbuzzzException (InvalidRepetitionFeedbuzzzException e) {
-		return ResponseEntity.badRequest().body(e.getErrorMessageDto());	
-	}
-	
 	@ExceptionHandler(NoMemberFoundException.class)
 	public ResponseEntity<ErrorMessageDto> whenNoMemberFoundException (NoMemberFoundException e) {
 		return ResponseEntity.badRequest().body(e.getErrorMessageDto());	

@@ -20,7 +20,6 @@ import tribe.controller.dto.PictureDto;
 import tribe.domain.MemberProfile;
 import tribe.domain.MemberProfilePictures;
 import tribe.domain.Picture;
-import tribe.exception.InvalidPictureException;
 import tribe.exception.NoMemberFoundException;
 import tribe.exception.NoPicturesFoundException;
 import tribe.exception.NoProfileFoundException;
@@ -80,7 +79,7 @@ public class ProfilePicturesService {
 	}
 
 	@Transactional
-	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws InvalidPictureException {
+	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws NoPicturesFoundException {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(NoMemberFoundException::new).getId())
 				.orElseThrow(NoProfileFoundException::new);
@@ -96,7 +95,11 @@ public class ProfilePicturesService {
 				}
 			});
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + pictureDto.getId()
+					));
 		}
 
 		memberProfilePictures.setPictures(pictures);
@@ -117,7 +120,7 @@ public class ProfilePicturesService {
 	}
 
 	@Transactional
-	public List<PictureDto> deleteProfilePicture(String id) throws InvalidPictureException {
+	public List<PictureDto> deleteProfilePicture(String id) throws NoPicturesFoundException {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(NoMemberFoundException::new).getId())
 				.orElseThrow(NoProfileFoundException::new);
@@ -128,8 +131,11 @@ public class ProfilePicturesService {
 			this.pictureRepo.deleteById(id);
 			pictures = pictures.stream().filter(pict -> !pict.getId().equals(id)).collect(Collectors.toList());
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE,
-					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + id
+					));
 		}
 
 		memberProfilePictures.setPictures(pictures);

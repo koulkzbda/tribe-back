@@ -7,7 +7,6 @@ import java.util.NoSuchElementException;
 import javax.validation.Valid;
 
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,13 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import tribe.controller.dto.ErrorCode;
-import tribe.controller.dto.ErrorMessageDto;
 import tribe.controller.dto.FeedbuzzDto;
 import tribe.controller.dto.PictureDto;
 import tribe.controller.dto.RepetitionFeedbuzzUpdateDto;
-import tribe.exception.InvalidPictureException;
-import tribe.exception.InvalidRepetitionFeedbuzzzException;
 import tribe.service.HabitStackService;
 import tribe.service.PublicationPicturesService;
 import tribe.service.RepetitionService;
@@ -55,13 +50,7 @@ public class HabitStackFeedbuzzController {
 	}
 
 	@PatchMapping(value = "/repetition", produces = "application/tribe-back-v1+json")
-	public ResponseEntity<?> updateRepetition(@RequestBody @Valid RepetitionFeedbuzzUpdateDto repetition,
-			BindingResult result) {
-		if (result.hasErrors()) {
-			throw new InvalidRepetitionFeedbuzzzException(
-					new ErrorMessageDto(ErrorCode.VALIDATION, "Répétition invalide."));
-		}
-
+	public ResponseEntity<?> updateRepetition(@RequestBody @Valid RepetitionFeedbuzzUpdateDto repetition) {
 		return ResponseEntity.status(HttpStatus.OK).body(repetitionService.updateRepetition(repetition));
 	}
 
@@ -78,9 +67,6 @@ public class HabitStackFeedbuzzController {
 	@PatchMapping(value = "/repetition/headline-picture", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<?> setProfilePicture(@RequestBody @Valid PictureDto pictureDto, BindingResult result,
 			@RequestParam("publicationId") String publicationId) {
-		if (result.hasErrors()) {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
-		}
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(publicationPicturesService.setHeadlinePicture(pictureDto, publicationId));

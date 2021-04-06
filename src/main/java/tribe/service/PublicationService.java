@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +20,7 @@ import tribe.controller.dto.PictureDto;
 import tribe.domain.MemberProfile;
 import tribe.domain.MemberProfilePictures;
 import tribe.domain.Picture;
-import tribe.exception.InvalidPictureException;
+import tribe.exception.NoPicturesFoundException;
 import tribe.repository.MemberProfilePicturesRepo;
 import tribe.repository.MemberProfileRepo;
 import tribe.repository.MemberRepo;
@@ -32,14 +34,16 @@ public class PublicationService {
 	protected MemberProfilePicturesRepo memberProfilePicturesRepo;
 	protected PictureRepo pictureRepo;
 	protected SecurityServiceImpl securityService;
+	protected MessageSource messageSource;
 
 	public PublicationService(MemberRepo memberRepo, MemberProfileRepo memberProfileRepo, MemberProfilePicturesRepo memberProfilePicturesRepo,
-			PictureRepo pictureRepo, SecurityServiceImpl securityService) {
+			PictureRepo pictureRepo, SecurityServiceImpl securityService, MessageSource messageSource) {
 		this.memberRepo = memberRepo;
 		this.memberProfileRepo = memberProfileRepo;
 		this.securityService = securityService;
 		this.memberProfilePicturesRepo = memberProfilePicturesRepo;
 		this.pictureRepo = pictureRepo;
+		this.messageSource = messageSource;
 	}
 
 	@Transactional
@@ -71,7 +75,7 @@ public class PublicationService {
 	}
 
 	@Transactional
-	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws InvalidPictureException {
+	public List<PictureDto> setProfilePicture(PictureDto pictureDto) throws NoPicturesFoundException {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
@@ -88,7 +92,11 @@ public class PublicationService {
 				}
 			});
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + pictureDto.getId()
+					));
 		}
 		
 		memberProfilePictures.setPictures(pictures);
@@ -111,7 +119,7 @@ public class PublicationService {
 	}
 	
 	@Transactional
-	public List<PictureDto> deleteProfilePicture(String id) throws InvalidPictureException {
+	public List<PictureDto> deleteProfilePicture(String id) throws NoPicturesFoundException {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
@@ -123,7 +131,11 @@ public class PublicationService {
 			this.pictureRepo.deleteById(id);
 			pictures = pictures.stream().filter(pict -> !pict.getId().equals(id)).collect(Collectors.toList());
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, "Photo inexistante"));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + id
+					));
 		}
 		
 		memberProfilePictures.setPictures(pictures);
