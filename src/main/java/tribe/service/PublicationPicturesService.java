@@ -21,7 +21,6 @@ import tribe.controller.dto.PictureDto;
 import tribe.domain.Picture;
 import tribe.domain.PublicationPictures;
 import tribe.domain.Repetition;
-import tribe.exception.InvalidPictureException;
 import tribe.exception.NoPicturesFoundException;
 import tribe.exception.NoPublicationFoundException;
 import tribe.repository.MemberRepo;
@@ -81,7 +80,7 @@ public class PublicationPicturesService {
 	}
 
 	@Transactional
-	public List<PictureDto> setHeadlinePicture(PictureDto pictureDto, String publicationId) throws InvalidPictureException {
+	public List<PictureDto> setHeadlinePicture(PictureDto pictureDto, String publicationId) throws NoPicturesFoundException {
 		
 		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
 				.orElseThrow(() -> new NoPicturesFoundException("publication", publicationId));
@@ -96,8 +95,11 @@ public class PublicationPicturesService {
 				}
 			});
 		} else {
-			System.out.println(LocaleContextHolder.getLocale());
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + pictureDto.getId()
+					));
 		}
 		
 		publicationPictures.setPictures(pictures);
@@ -115,7 +117,7 @@ public class PublicationPicturesService {
 	}
 	
 	@Transactional
-	public List<PictureDto> deletePicture(String publicationId, String pictureId) throws InvalidPictureException {
+	public List<PictureDto> deletePicture(String publicationId, String pictureId) throws NoPicturesFoundException {
 		
 		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
 				.orElseThrow(() -> new NoPicturesFoundException("publication", publicationId));
@@ -125,7 +127,11 @@ public class PublicationPicturesService {
 			this.pictureRepo.deleteById(pictureId);
 			pictures = pictures.stream().filter(pict -> !pict.getId().equals(pictureId)).collect(Collectors.toList());
 		} else {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.PICTURE, messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale())));
+			throw new NoPicturesFoundException(new ErrorMessageDto(
+					ErrorCode.PICTURE,
+					messageSource.getMessage("errorMessage.inexistingPicture", null, LocaleContextHolder.getLocale()),
+					messageSource.getMessage("errorMessage.NoPictureFoundWithId", null, LocaleContextHolder.getLocale()) + " " + pictureId
+					));
 		}
 		
 		publicationPictures.setPictures(pictures);

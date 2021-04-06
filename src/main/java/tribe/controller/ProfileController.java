@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,12 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import tribe.controller.dto.ErrorCode;
-import tribe.controller.dto.ErrorMessageDto;
 import tribe.controller.dto.PictureDto;
 import tribe.controller.dto.ProfileDto;
-import tribe.exception.InvalidPictureException;
-import tribe.exception.InvalidProfileException;
 import tribe.service.ProfilePicturesService;
 import tribe.service.ProfileService;
 
@@ -56,20 +51,13 @@ public class ProfileController {
 	}
 
 	@PostMapping(value = "/bio", produces = "application/tribe-back-v1+json")
-	public ResponseEntity<?> updateBio(@RequestBody ProfileDto profileDto, BindingResult result) {
-		if (result.hasErrors()) {
-			throw new InvalidProfileException(new ErrorMessageDto(ErrorCode.VALIDATION, "Profil invalide"));
-		}
+	public ResponseEntity<?> updateBio(@Valid @RequestBody ProfileDto profileDto) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(profileService.updateBio(profileDto));
 	}
 
 	@PatchMapping(value = "/profile-picture", produces = "application/tribe-back-v1+json")
-	public ResponseEntity<?> setProfilePicture(@RequestBody @Valid PictureDto pictureDto, BindingResult result) {
-		if (result.hasErrors()) {
-			throw new InvalidPictureException(new ErrorMessageDto(ErrorCode.VALIDATION, "Photo de profil invalide"));
-		}
-
+	public ResponseEntity<?> setProfilePicture(@RequestBody @Valid PictureDto pictureDto) {
 		return ResponseEntity.status(HttpStatus.OK).body(profilePicturesService.setProfilePicture(pictureDto));
 	}
 
