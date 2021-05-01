@@ -1,11 +1,15 @@
 package tribe.service;
 
+import java.util.ArrayList;
+
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.ProfileDto;
+import tribe.domain.Member;
 import tribe.domain.MemberProfile;
+import tribe.domain.MemberProfilePictures;
 import tribe.exception.NoMemberFoundException;
 import tribe.exception.NoProfileFoundException;
 import tribe.repository.MemberProfileRepo;
@@ -47,6 +51,16 @@ public class ProfileService {
 		this.memberProfileRepo.save(profile);
 		
 		return profileDto;
+	}
+	
+	public Member addNewProfile(Member member) {
+		
+		MemberProfile profile = new MemberProfile(null, null, member);
+		MemberProfilePictures profilePictures = new MemberProfilePictures(new ArrayList<>(), profile);
+		profile.setProfilePictures(profilePictures);
+		member.setMemberProfile(profile);
+		
+		return member;
 	}
 
 }

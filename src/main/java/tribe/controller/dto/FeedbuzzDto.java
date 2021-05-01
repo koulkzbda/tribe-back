@@ -19,6 +19,8 @@ public class FeedbuzzDto {
 	protected Integer nbDays;
 
 	protected List<ProgressionDto> progressions = new ArrayList<>();
+	
+	protected String userId;
 
 	public FeedbuzzDto() {}
 	
@@ -31,6 +33,7 @@ public class FeedbuzzDto {
 			this.time = LocalDateTime.of(LocalDate.now(), habitStack.getWeekdays().get(0).getTime());
 		}
 		this.progressions = habitStack.getProgressions().stream().map(ProgressionDto::new).collect(Collectors.toList());
+		this.userId = habitStack.getSystem().getMember().getId();
 	}
 
 	public String getId() {
@@ -71,6 +74,14 @@ public class FeedbuzzDto {
 
 	public void setNbDays(Integer nbDays) {
 		this.nbDays = nbDays;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	
 }

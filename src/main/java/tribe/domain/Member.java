@@ -2,18 +2,25 @@ package tribe.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.MemberCreatedDto;
+import tribe.domain.enumaration.Role;
+
 @Entity
+@Table(indexes = @Index(name = "email_index", columnList = "email", unique = true))
 public class Member {
 	
 	@Id
@@ -32,6 +39,10 @@ public class Member {
     protected LocalDateTime registeredAt;
     
     protected LocalDateTime nextUpdateRepetition;
+    
+    protected Boolean isConfirmed = false;
+    
+    protected String confirmationToken;
     
     @OneToOne(cascade = CascadeType.ALL)
     protected MemberProfile memberProfile;
@@ -58,6 +69,15 @@ public class Member {
 	protected List<Membership> memberships = new ArrayList<>();
     
     public Member() {}
+    
+    public Member(MemberCreatedDto member) {
+    	firstName = member.getFirstName();
+    	lastName = member.getLastName();
+    	email = member.getEmail();
+    	pass = member.getPassword();
+    	registeredAt = LocalDateTime.now();
+    	roles = Arrays.asList(new RoleMember(this, Role.ROLE_USER));
+    }
 
 	public Member(String firstName, String lastName, String email, String pass, LocalDateTime registeredAt,
 			MemberProfile memberProfile, MemberWall memberWall, List<RoleMember> roles, List<Like> likes,
@@ -268,5 +288,21 @@ public class Member {
 
 	public void setMemberships(List<Membership> memberships) {
 		this.memberships = memberships;
+	}
+
+	public Boolean getIsConfirmed() {
+		return isConfirmed;
+	}
+
+	public void setIsConfirmed(Boolean isConfirmed) {
+		this.isConfirmed = isConfirmed;
+	}
+
+	public String getConfirmationToken() {
+		return confirmationToken;
+	}
+
+	public void setConfirmationToken(String confirmationToken) {
+		this.confirmationToken = confirmationToken;
 	}
 }
