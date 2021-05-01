@@ -13,6 +13,8 @@ public class ProfileDto {
 	protected String bio;
 	
 	protected List<PictureDto> profilePictures = new ArrayList<>();
+	
+	protected String userId;
 
 	public ProfileDto() {}
 	
@@ -32,6 +34,7 @@ public class ProfileDto {
 		this.id = profile.getId();
 		this.bio = profile.getBio();
 		this.profilePictures = profile.getProfilePictures().getPictures().stream().map(PictureDto::new).collect(Collectors.toList());
+		this.userId = profile.getMember().getId();
 	}
 
 	public String getBio() {
@@ -56,6 +59,14 @@ public class ProfileDto {
 
 	public void setProfilePictures(List<PictureDto> profilePictures) {
 		this.profilePictures = profilePictures;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 }

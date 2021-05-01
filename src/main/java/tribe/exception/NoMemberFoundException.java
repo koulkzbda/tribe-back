@@ -14,5 +14,9 @@ public class NoMemberFoundException extends JobException {
 	public NoMemberFoundException() {
 		super(new ErrorMessageDto(ErrorCode.SECURITY, "No member connected or inexisting member connected."));
 	}
+	
+	public NoMemberFoundException(String message) {
+		super(new ErrorMessageDto(ErrorCode.SECURITY, message));
+	}
 
 }

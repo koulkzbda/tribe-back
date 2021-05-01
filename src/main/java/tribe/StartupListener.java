@@ -134,6 +134,7 @@ public class StartupListener {
 			user1.setPass(passwordEncoder.encode("superpass"));
 			user1.setRoles(Arrays.asList(new RoleMember(user1, Role.ROLE_ADMIN), new RoleMember(user1, Role.ROLE_USER),
 					new RoleMember(user1, Role.ROLE_MODERATOR)));
+			user1.setIsConfirmed(true);
 			this.memberRepo.save(user1);
 
 			Member user2 = new Member();
@@ -142,6 +143,7 @@ public class StartupListener {
 			user2.setEmail("user@dev.fr");
 			user2.setPass(passwordEncoder.encode("superpass"));
 			user2.setRoles(Arrays.asList(new RoleMember(user2, Role.ROLE_USER)));
+			user2.setIsConfirmed(true);
 			this.memberRepo.save(user2);
 //
 //			Member user3 = new Member();

@@ -8,6 +8,8 @@ import tribe.domain.enumaration.Role;
 
 public class MemberDto {
 
+	protected String id;
+	
     protected String firstName;
 
     protected String lastName;
@@ -26,6 +28,7 @@ public class MemberDto {
 	}
 	
 	public MemberDto(Member member) {
+		id = member.getId();
 		this.firstName = member.getFirstName();
 		this.lastName = member.getLastName();
 		this.email = member.getEmail();
@@ -33,11 +36,20 @@ public class MemberDto {
 	}
 	
 	public MemberDto(Member member, String token) {
+		id = member.getId();
 		this.firstName = member.getFirstName();
 		this.lastName = member.getLastName();
 		this.email = member.getEmail();
 		this.roles = member.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toList());
 		this.token = token;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
