@@ -56,7 +56,7 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
 		
 		User user = (User) authentication.getPrincipal();
 		
-		tribe.domain.Member tribeUser = memberRepo.findByEmail(user.getUsername())
+		tribe.domain.socialNetwork.Member tribeUser = memberRepo.findByEmail(user.getUsername())
 				.orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
 
 		String jws = generateToken(user);

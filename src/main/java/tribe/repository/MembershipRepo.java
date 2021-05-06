@@ -2,8 +2,8 @@ package tribe.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import tribe.domain.Membership;
 import tribe.domain.key.MembershipKey;
+import tribe.domain.socialNetwork.Membership;
 
 public interface MembershipRepo extends JpaRepository<Membership, MembershipKey> {
 

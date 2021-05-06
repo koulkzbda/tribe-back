@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Repetition;
+import tribe.domain.habitTracking.Repetition;
 
 public class RepetitionFeedbuzzUpdateDto {
 

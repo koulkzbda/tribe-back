@@ -7,9 +7,9 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.ProfileDto;
-import tribe.domain.Member;
-import tribe.domain.MemberProfile;
-import tribe.domain.MemberProfilePictures;
+import tribe.domain.socialNetwork.Member;
+import tribe.domain.socialNetwork.MemberProfile;
+import tribe.domain.socialNetwork.MemberProfilePictures;
 import tribe.exception.NoMemberFoundException;
 import tribe.exception.NoProfileFoundException;
 import tribe.repository.MemberProfileRepo;

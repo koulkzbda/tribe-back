@@ -3,8 +3,8 @@ package tribe.controller.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Member;
 import tribe.domain.enumaration.Role;
+import tribe.domain.socialNetwork.Member;
 
 public class MemberDto {
 

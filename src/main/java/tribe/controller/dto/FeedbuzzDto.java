@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.HabitStack;
+import tribe.domain.habitTracking.HabitStack;
 
 public class FeedbuzzDto {
 

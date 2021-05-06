@@ -1,6 +1,6 @@
 package tribe.controller.dto;
 
-import tribe.domain.Step;
+import tribe.domain.habitTracking.Step;
 
 public class StepDto {
 	

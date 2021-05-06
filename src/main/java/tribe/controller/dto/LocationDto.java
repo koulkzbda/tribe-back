@@ -1,6 +1,6 @@
 package tribe.controller.dto;
 
-import tribe.domain.Location;
+import tribe.domain.socialNetwork.Location;
 
 public class LocationDto {
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Identity;
-import tribe.domain.Progression;
+import tribe.domain.habitTracking.Identity;
+import tribe.domain.habitTracking.Progression;
 
 public class ProgressionDto {
 

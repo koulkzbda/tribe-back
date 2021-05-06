@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.MemberCreatedDto;
 import tribe.controller.dto.MemberDto;
-import tribe.domain.Member;
+import tribe.domain.socialNetwork.Member;
 import tribe.exception.EmailAlreadyExistsException;
 import tribe.exception.NoMemberFoundException;
 import tribe.repository.MemberProfileRepo;

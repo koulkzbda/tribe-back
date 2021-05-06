@@ -2,7 +2,7 @@ package tribe.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import tribe.domain.System;
+import tribe.domain.habitTracking.System;
 
 public interface SystemRepo extends JpaRepository<System, String> {
 	

@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import tribe.domain.HabitStack;
 import tribe.domain.enumaration.WeekdayEnum;
+import tribe.domain.habitTracking.HabitStack;
 
 public interface HabitStackRepo extends JpaRepository<HabitStack, String> {
 	
