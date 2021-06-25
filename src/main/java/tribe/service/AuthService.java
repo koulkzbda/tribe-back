@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.MemberCreatedDto;
 import tribe.controller.dto.MemberDto;
-import tribe.domain.Member;
+import tribe.domain.socialNetwork.Member;
 import tribe.exception.EmailAlreadyExistsException;
 import tribe.exception.NoMemberFoundException;
 import tribe.repository.MemberProfileRepo;
@@ -69,6 +69,21 @@ public class AuthService {
 
 		return new MemberCreatedDto(member);
 	}
+	
+	@Transactional
+	public MemberCreatedDto sendConfirmationEmail(MemberCreatedDto member) {
+		Member memberCreated = memberRepo.findByEmail(member.getEmail()).orElseThrow(() -> new NoMemberFoundException());
+		
+		if (memberCreated.getConfirmationToken() == null) {
+			UUID uuid = UUID.randomUUID();
+			String confirmationToken = uuid.toString();
+			memberCreated.setConfirmationToken(confirmationToken);
+			memberCreated = memberRepo.save(memberCreated);
+		}
+		sendAccountConfirmationEmail(memberCreated, member.getEmailConfirmationUrlTemplate());
+		
+		return new MemberCreatedDto(member);
+	}
 
 	@Transactional
 	public MemberDto confirmMember(String id, String token) {
@@ -100,7 +115,7 @@ public class AuthService {
 		sendResetPasswordEmail(member, forgetPasswordUrl);
 		memberRepo.save(member);
 
-		return new MemberDto(null, null, email, null);
+		return new MemberDto(null, null, email, null, null);
 	}
 
 	public MemberDto resetPassword(String id, String token, String password) {

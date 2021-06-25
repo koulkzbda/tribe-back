@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Identity;
-import tribe.domain.Progression;
+import tribe.domain.habitTracking.Progression;
 
 public class ProgressionDto {
 
 	protected String progressionId;
+	
+	protected String versionName;
 
 	protected String habitId;
 	
@@ -19,13 +20,7 @@ public class ProgressionDto {
 	
 	protected LocationDto location;
 	
-	protected RepetitionDto repetition;
-	
-	protected Integer nbCompleted;
-	
-	protected List<String> identities = new ArrayList<>();
-	
-	protected List<String> identityCategories = new ArrayList<>();
+	protected List<IdentityDto> identities = new ArrayList<>();
 	
 	protected StepDto preparationHabit;
 	
@@ -34,53 +29,37 @@ public class ProgressionDto {
 	protected StepDto reward;
 	
 	protected HabitContractDto habitContract;
+	
+	protected Integer executionOrder;
+	
+	protected Boolean isActive;
 
 	public ProgressionDto() {}
 	
 	public ProgressionDto(Progression progression) {
 		this.progressionId = progression.getId();
+		this.versionName = progression.getVersionName();
 		this.habitId = progression.getHabit().getId();
 		this.habitName = progression.getHabit().getName();
 		this.gatewayHabit = progression.getHabit().getGatewayHabit();
 		this.location = new LocationDto(progression.getLocation());
-		this.repetition = new RepetitionDto(progression.getRepetitions().get(0));
 		if ( progression.getPreparationHabit() != null ) {
 			this.preparationHabit = new StepDto(progression.getPreparationHabit());
 		}
-		if ( progression.getConditionningHabit() != null ) {
-			this.conditioningStep = new StepDto(progression.getConditionningHabit());
+		if ( progression.getConditioningStep() != null ) {
+			this.conditioningStep = new StepDto(progression.getConditioningStep());
 		}
 		if ( progression.getReward() != null ) {
 			this.reward = new StepDto(progression.getReward());
 		}
 		if (progression.getHabit().getIdentities() != null) {
-			this.identities = progression.getHabit().getIdentities().stream().map(Identity::getName).collect(Collectors.toList());
-			
-			progression.getHabit().getIdentities().forEach(identity -> {
-				identity.getWeightings().stream().forEach(weighting -> {
-					identityCategories.add(weighting.getIdentityCategory().getIdentityCategory().name());
-				});
-			});
-			identityCategories.stream().distinct().collect(Collectors.toList());
+			this.identities = progression.getHabit().getIdentities().stream().map(IdentityDto::new).collect(Collectors.toList());
 		}
 		if (progression.getHabitContract() != null) {
 			this.habitContract = new HabitContractDto(progression.getHabitContract());
 		}
-		//  TO DO nbCompleted
-	}
-
-	public ProgressionDto(String progressionId, String habitId, String habitName, String gatewayHabit,
-			LocationDto location, RepetitionDto repetition, Integer nbCompleted,
-			List<String> identities, List<String> identityCategories) {
-		this.progressionId = progressionId;
-		this.habitId = habitId;
-		this.habitName = habitName;
-		this.gatewayHabit = gatewayHabit;
-		this.location = location;
-		this.repetition = repetition;
-		this.nbCompleted = nbCompleted;
-		this.identities = identities;
-		this.identityCategories = identityCategories;
+		executionOrder = progression.getExecutionOrder();
+		isActive = progression.getIsActive();
 	}
 
 	public String getProgressionId() {
@@ -89,6 +68,14 @@ public class ProgressionDto {
 
 	public void setProgressionId(String progressionId) {
 		this.progressionId = progressionId;
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
 	}
 
 	public String getHabitId() {
@@ -123,44 +110,20 @@ public class ProgressionDto {
 		this.location = location;
 	}
 
-	public RepetitionDto getRepetition() {
-		return repetition;
-	}
-
-	public void setRepetition(RepetitionDto repetition) {
-		this.repetition = repetition;
-	}
-
-	public Integer getNbCompleted() {
-		return nbCompleted;
-	}
-
-	public void setNbCompleted(Integer nbCompleted) {
-		this.nbCompleted = nbCompleted;
-	}
-
-	public List<String> getIdentities() {
+	public List<IdentityDto> getIdentities() {
 		return identities;
 	}
 
-	public void setIdentities(List<String> identities) {
+	public void setIdentities(List<IdentityDto> identities) {
 		this.identities = identities;
 	}
 
-	public List<String> getIdentityCategories() {
-		return identityCategories;
-	}
-
-	public void setIdentityCategories(List<String> identityCategories) {
-		this.identityCategories = identityCategories;
-	}
-
-	public StepDto getContioningStep() {
+	public StepDto getConditioningStep() {
 		return conditioningStep;
 	}
 
-	public void setContioningStep(StepDto contioningStep) {
-		this.conditioningStep = contioningStep;
+	public void setConditioningStep(StepDto conditioningStep) {
+		this.conditioningStep = conditioningStep;
 	}
 
 	public StepDto getReward() {
@@ -185,5 +148,21 @@ public class ProgressionDto {
 
 	public void setPreparationHabit(StepDto preparationHabit) {
 		this.preparationHabit = preparationHabit;
+	}
+
+	public Integer getExecutionOrder() {
+		return executionOrder;
+	}
+
+	public void setExecutionOrder(Integer executionOrder) {
+		this.executionOrder = executionOrder;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 }

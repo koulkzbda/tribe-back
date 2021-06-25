@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -18,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import tribe.controller.dto.ErrorCode;
 import tribe.controller.dto.ErrorMessageDto;
 import tribe.controller.dto.PictureDto;
-import tribe.domain.Picture;
-import tribe.domain.PublicationPictures;
-import tribe.domain.Repetition;
+import tribe.domain.habitTracking.Repetition;
+import tribe.domain.socialNetwork.Picture;
+import tribe.domain.socialNetwork.PublicationPictures;
 import tribe.exception.NoPicturesFoundException;
 import tribe.exception.NoPublicationFoundException;
 import tribe.repository.MemberRepo;
@@ -84,7 +85,7 @@ public class PublicationPicturesService {
 		
 		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
 				.orElseThrow(() -> new NoPicturesFoundException("publication", publicationId));
-		List<Picture> pictures = publicationPictures.getPictures();
+		Set<Picture> pictures = publicationPictures.getPictures();
 		
 		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureDto.getId())) ) {
 			pictures.stream().forEach(pict -> {
@@ -109,7 +110,7 @@ public class PublicationPicturesService {
 	}
 	
 	public List<PictureDto> getPublicationPictures(String publicationId) {
-		List<Picture> pictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
+		Set<Picture> pictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
 				.orElseThrow(() -> new NoPicturesFoundException("publication", publicationId))
 				.getPictures();
 		
@@ -121,11 +122,11 @@ public class PublicationPicturesService {
 		
 		PublicationPictures publicationPictures = this.publicationPicturesRepo.findByPublicationId(publicationId)
 				.orElseThrow(() -> new NoPicturesFoundException("publication", publicationId));
-		List<Picture> pictures = publicationPictures.getPictures();
+		Set<Picture> pictures = publicationPictures.getPictures();
 		
 		if ( pictures.stream().anyMatch(pict -> pict.getId().equals(pictureId)) ) {
 			this.pictureRepo.deleteById(pictureId);
-			pictures = pictures.stream().filter(pict -> !pict.getId().equals(pictureId)).collect(Collectors.toList());
+			pictures = pictures.stream().filter(pict -> !pict.getId().equals(pictureId)).collect(Collectors.toSet());
 		} else {
 			throw new NoPicturesFoundException(new ErrorMessageDto(
 					ErrorCode.PICTURE,

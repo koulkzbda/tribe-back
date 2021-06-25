@@ -3,10 +3,11 @@ package tribe.controller.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.HabitStack;
+import tribe.domain.habitTracking.HabitStack;
 
 public class FeedbuzzDto {
 
@@ -18,7 +19,7 @@ public class FeedbuzzDto {
 	
 	protected Integer nbDays;
 
-	protected List<ProgressionDto> progressions = new ArrayList<>();
+	protected List<ProgressionWithLatestRepetitionDto> progressions = new ArrayList<>();
 	
 	protected String userId;
 
@@ -30,9 +31,9 @@ public class FeedbuzzDto {
 		if ( habitStack.getWeekdays().size() > 0 ) {
 			this.nbDays = habitStack.getWeekdays().size();
 			
-			this.time = LocalDateTime.of(LocalDate.now(), habitStack.getWeekdays().get(0).getTime());
+			this.time = LocalDateTime.of(LocalDate.now(), habitStack.getWeekdays().iterator().next().getTime());
 		}
-		this.progressions = habitStack.getProgressions().stream().map(ProgressionDto::new).collect(Collectors.toList());
+		this.progressions = habitStack.getProgressions().stream().map(ProgressionWithLatestRepetitionDto::new).sorted(Comparator.comparing(ProgressionWithLatestRepetitionDto::getExecutionOrder)).collect(Collectors.toList());
 		this.userId = habitStack.getSystem().getMember().getId();
 	}
 
@@ -60,11 +61,11 @@ public class FeedbuzzDto {
 		this.time = time;
 	}
 
-	public List<ProgressionDto> getProgressions() {
+	public List<ProgressionWithLatestRepetitionDto> getProgressions() {
 		return progressions;
 	}
 
-	public void setProgressions(List<ProgressionDto> progressions) {
+	public void setProgressions(List<ProgressionWithLatestRepetitionDto> progressions) {
 		this.progressions = progressions;
 	}
 

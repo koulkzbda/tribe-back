@@ -3,8 +3,8 @@ package tribe.controller.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tribe.domain.Member;
 import tribe.domain.enumaration.Role;
+import tribe.domain.socialNetwork.Member;
 
 public class MemberDto {
 
@@ -19,12 +19,15 @@ public class MemberDto {
     protected List<Role> roles;
     
     protected String token;
+    
+    protected Boolean firstSystemCreated;
 
-	public MemberDto(String firstName, String lastName, String email, List<Role> roles) {
+	public MemberDto(String firstName, String lastName, String email, List<Role> roles, Boolean firstSystemCreated) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.roles = roles;
+		this.firstSystemCreated = firstSystemCreated;
 	}
 	
 	public MemberDto(Member member) {
@@ -33,6 +36,7 @@ public class MemberDto {
 		this.lastName = member.getLastName();
 		this.email = member.getEmail();
 		this.roles = member.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toList());
+		this.firstSystemCreated = member.getFirstSystemCreated();
 	}
 	
 	public MemberDto(Member member, String token) {
@@ -42,6 +46,7 @@ public class MemberDto {
 		this.email = member.getEmail();
 		this.roles = member.getRoles().stream().map(role -> role.getRole()).collect(Collectors.toList());
 		this.token = token;
+		this.firstSystemCreated = member.getFirstSystemCreated();
 	}
 
 	public String getId() {
@@ -90,6 +95,14 @@ public class MemberDto {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public Boolean getFirstSystemCreated() {
+		return firstSystemCreated;
+	}
+
+	public void setFirstSystemCreated(Boolean firstSystemCreated) {
+		this.firstSystemCreated = firstSystemCreated;
 	}
     
 }

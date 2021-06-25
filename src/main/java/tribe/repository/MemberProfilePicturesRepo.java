@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import tribe.domain.MemberProfilePictures;
+import tribe.domain.socialNetwork.MemberProfilePictures;
 
 public interface MemberProfilePicturesRepo extends JpaRepository<MemberProfilePictures, String> {
 	

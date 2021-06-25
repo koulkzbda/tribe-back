@@ -38,6 +38,11 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.OK).body(authService.confirmMember(id, token));
 	}
 	
+	@PostMapping(value = "/send-email-confirmation", produces = "application/tribe-back-v1+json")
+	public ResponseEntity<MemberCreatedDto> sendConfirmationEmail(@RequestBody @Valid MemberCreatedDto member) {
+		return ResponseEntity.status(HttpStatus.OK).body(authService.sendConfirmationEmail(member));
+	}
+	
 	@GetMapping(value = "/forgot-password", produces = "application/tribe-back-v1+json")
 	public ResponseEntity<MemberDto> sendForgetPasswordEmail(@RequestParam String email, @RequestParam String resetPasswordUrl) {
 		return ResponseEntity.status(HttpStatus.OK).body(authService.forgetPassword(email, resetPasswordUrl));

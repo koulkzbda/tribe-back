@@ -2,7 +2,7 @@ package tribe.controller.dto;
 
 import java.time.LocalDateTime;
 
-import tribe.domain.Picture;
+import tribe.domain.socialNetwork.Picture;
 
 public class PictureDto {
 	

@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import tribe.domain.Repetition;
 import tribe.domain.enumaration.RepetitionStatusEnum;
 import tribe.domain.enumaration.WeekdayEnum;
+import tribe.domain.habitTracking.Repetition;
 
 public interface RepetitionRepo extends JpaRepository<Repetition, String> {
 	

@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import tribe.domain.Member;
+import tribe.domain.socialNetwork.Member;
 
 public interface MemberRepo extends JpaRepository<Member, String> {
 

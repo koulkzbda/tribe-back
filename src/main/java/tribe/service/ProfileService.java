@@ -1,15 +1,15 @@
 package tribe.service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import tribe.controller.dto.ProfileDto;
-import tribe.domain.Member;
-import tribe.domain.MemberProfile;
-import tribe.domain.MemberProfilePictures;
+import tribe.controller.dto.MemberProfileDto;
+import tribe.domain.socialNetwork.Member;
+import tribe.domain.socialNetwork.MemberProfile;
+import tribe.domain.socialNetwork.MemberProfilePictures;
 import tribe.exception.NoMemberFoundException;
 import tribe.exception.NoProfileFoundException;
 import tribe.repository.MemberProfileRepo;
@@ -29,8 +29,8 @@ public class ProfileService {
 	}
 
 	@Transactional
-	public ProfileDto findByConnectedMember() {
-		return new ProfileDto(memberProfileRepo
+	public MemberProfileDto findByConnectedMember() {
+		return new MemberProfileDto(memberProfileRepo
 				.findEagerByMemberId(memberRepo.findByEmail(securityService.getUserEmail())
 						.orElseThrow(NoMemberFoundException::new)
 						.getId())
@@ -39,7 +39,7 @@ public class ProfileService {
 	}
 	
 	@Transactional
-	public ProfileDto updateBio(ProfileDto profileDto) {
+	public MemberProfileDto updateBio(MemberProfileDto memberProfileDto) {
 		MemberProfile profile = memberProfileRepo.findEagerByMemberId(
 				memberRepo.findByEmail(securityService.getUserEmail()
 						)
@@ -47,16 +47,16 @@ public class ProfileService {
 				.getId())
 				.orElseThrow(NoProfileFoundException::new);
 
-		profile.setBio(profileDto.getBio());
+		profile.setBio(memberProfileDto.getBio());
 		this.memberProfileRepo.save(profile);
 		
-		return profileDto;
+		return memberProfileDto;
 	}
 	
 	public Member addNewProfile(Member member) {
 		
 		MemberProfile profile = new MemberProfile(null, null, member);
-		MemberProfilePictures profilePictures = new MemberProfilePictures(new ArrayList<>(), profile);
+		MemberProfilePictures profilePictures = new MemberProfilePictures(new HashSet<>(), profile);
 		profile.setProfilePictures(profilePictures);
 		member.setMemberProfile(profile);
 		

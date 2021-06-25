@@ -1,7 +1,7 @@
 package tribe.controller.dto;
 
-import tribe.domain.Metric;
-import tribe.domain.MetricValue;
+import tribe.domain.habitTracking.Metric;
+import tribe.domain.habitTracking.MetricValue;
 
 public class MetricValueFeedbuzzUpdateDto {
 

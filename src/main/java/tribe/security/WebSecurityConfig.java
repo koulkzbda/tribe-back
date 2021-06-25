@@ -45,7 +45,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/register",
             "/forgot-password",
             "/reset-password",
-            "/confirmation"
+            "/confirmation",
+            "/send-email-confirmation"
     };
 
     public WebSecurityConfig(JWTAuthenticationSuccessHandler jwtAuthenticationSuccessHandler, JWTAuthorizationFilter jwtAuthorizationFilter) {

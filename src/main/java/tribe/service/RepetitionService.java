@@ -18,15 +18,15 @@ import org.springframework.stereotype.Service;
 
 import tribe.controller.dto.MetricValueFeedbuzzUpdateDto;
 import tribe.controller.dto.RepetitionFeedbuzzUpdateDto;
-import tribe.domain.Member;
-import tribe.domain.Metric;
-import tribe.domain.MetricValue;
-import tribe.domain.Progression;
-import tribe.domain.PublicationPictures;
-import tribe.domain.Repetition;
-import tribe.domain.RepetitionStatus;
 import tribe.domain.enumaration.RepetitionStatusEnum;
 import tribe.domain.enumaration.WeekdayEnum;
+import tribe.domain.habitTracking.Metric;
+import tribe.domain.habitTracking.MetricValue;
+import tribe.domain.habitTracking.Progression;
+import tribe.domain.habitTracking.Repetition;
+import tribe.domain.habitTracking.RepetitionStatus;
+import tribe.domain.socialNetwork.Member;
+import tribe.domain.socialNetwork.PublicationPictures;
 import tribe.repository.MetricRepo;
 import tribe.repository.PictureRepo;
 import tribe.repository.ProgressionRepo;
@@ -95,17 +95,21 @@ public class RepetitionService {
 	
 	@Transactional
 	public void updateRepetitionsForToday(Member member, WeekdayEnum weekdayEnum) {
+		LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 1);
 		List<Progression> progressions = progressionRepo.findByMemberIdAndWeekday(member.getId(), weekdayEnum);
 		progressions.stream().forEach(progression -> {
-			RepetitionStatus repetitionStatus = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			if (!progression.getRepetitions().stream().anyMatch(r -> r.getPostedAt().compareTo(today) >= 0)) {
+				RepetitionStatus repetitionStatus = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+				
+				Repetition repetition = new Repetition(repetitionStatus, progression, null);
+				PublicationPictures publicationPictures = new PublicationPictures(new HashSet<>(), repetition);
+				repetition.setPublicationPictures(publicationPictures);
+				repetition.setAuthor(member);
+				progression.addRepetition(repetition);
+				
+				progressionRepo.save(progression);
+			}
 			
-			Repetition repetition = new Repetition(repetitionStatus, progression, null);
-			PublicationPictures publicationPictures = new PublicationPictures(new ArrayList<>(), repetition);
-			repetition.setPublicationPictures(publicationPictures);
-			repetition.setAuthor(member);
-			progression.addRepetition(repetition);
-			
-			progressionRepo.save(progression);
 		});
 		
 		

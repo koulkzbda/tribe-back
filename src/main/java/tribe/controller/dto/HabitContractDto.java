@@ -1,6 +1,6 @@
 package tribe.controller.dto;
 
-import tribe.domain.HabitContract;
+import tribe.domain.habitTracking.HabitContract;
 
 public class HabitContractDto {
 

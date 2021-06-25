@@ -1,11 +1,14 @@
 package tribe;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.transaction.Transactional;
 
@@ -14,47 +17,47 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import tribe.domain.CommentOfComment;
-import tribe.domain.CommentOfPublication;
-import tribe.domain.Habit;
-import tribe.domain.HabitContract;
-import tribe.domain.HabitStack;
-import tribe.domain.Identity;
-import tribe.domain.IdentityCategory;
-import tribe.domain.Like;
-import tribe.domain.Location;
-import tribe.domain.Member;
-import tribe.domain.MemberProfile;
-import tribe.domain.MemberProfilePictures;
-import tribe.domain.MemberWall;
-import tribe.domain.MemberWallNotification;
-import tribe.domain.Membership;
-import tribe.domain.Metric;
-import tribe.domain.MetricValue;
-import tribe.domain.NotificationStatus;
-import tribe.domain.Progression;
-import tribe.domain.Publication;
-import tribe.domain.PublicationPictures;
-import tribe.domain.ReactionNotification;
-import tribe.domain.Repetition;
-import tribe.domain.RepetitionStatus;
-import tribe.domain.RoleMember;
-import tribe.domain.RoleTribe;
-import tribe.domain.Step;
-import tribe.domain.System;
-import tribe.domain.Tribe;
-import tribe.domain.TribeCategory;
-import tribe.domain.TribeProfile;
-import tribe.domain.TribeProfilePictures;
-import tribe.domain.TribeWall;
-import tribe.domain.Weekday;
-import tribe.domain.Weighting;
 import tribe.domain.enumaration.IdentityCategoryEnum;
 import tribe.domain.enumaration.NotificationStatusEnum;
 import tribe.domain.enumaration.RepetitionStatusEnum;
 import tribe.domain.enumaration.Role;
 import tribe.domain.enumaration.RoleTribeEnum;
 import tribe.domain.enumaration.WeekdayEnum;
+import tribe.domain.habitTracking.Habit;
+import tribe.domain.habitTracking.HabitContract;
+import tribe.domain.habitTracking.HabitStack;
+import tribe.domain.habitTracking.Identity;
+import tribe.domain.habitTracking.IdentityCategory;
+import tribe.domain.habitTracking.Metric;
+import tribe.domain.habitTracking.MetricValue;
+import tribe.domain.habitTracking.Progression;
+import tribe.domain.habitTracking.Repetition;
+import tribe.domain.habitTracking.RepetitionStatus;
+import tribe.domain.habitTracking.Step;
+import tribe.domain.habitTracking.System;
+import tribe.domain.habitTracking.Weekday;
+import tribe.domain.habitTracking.Weighting;
+import tribe.domain.socialNetwork.CommentOfComment;
+import tribe.domain.socialNetwork.CommentOfPublication;
+import tribe.domain.socialNetwork.Like;
+import tribe.domain.socialNetwork.Location;
+import tribe.domain.socialNetwork.Member;
+import tribe.domain.socialNetwork.MemberProfile;
+import tribe.domain.socialNetwork.MemberProfilePictures;
+import tribe.domain.socialNetwork.MemberWall;
+import tribe.domain.socialNetwork.MemberWallNotification;
+import tribe.domain.socialNetwork.Membership;
+import tribe.domain.socialNetwork.NotificationStatus;
+import tribe.domain.socialNetwork.Publication;
+import tribe.domain.socialNetwork.PublicationPictures;
+import tribe.domain.socialNetwork.ReactionNotification;
+import tribe.domain.socialNetwork.RoleMember;
+import tribe.domain.socialNetwork.RoleTribe;
+import tribe.domain.socialNetwork.Tribe;
+import tribe.domain.socialNetwork.TribeCategory;
+import tribe.domain.socialNetwork.TribeProfile;
+import tribe.domain.socialNetwork.TribeProfilePictures;
+import tribe.domain.socialNetwork.TribeWall;
 import tribe.repository.HabitRepo;
 import tribe.repository.HabitStackRepo;
 import tribe.repository.IdentityCategoryRepo;
@@ -135,6 +138,7 @@ public class StartupListener {
 			user1.setRoles(Arrays.asList(new RoleMember(user1, Role.ROLE_ADMIN), new RoleMember(user1, Role.ROLE_USER),
 					new RoleMember(user1, Role.ROLE_MODERATOR)));
 			user1.setIsConfirmed(true);
+			user1.setFirstSystemCreated(true);
 			this.memberRepo.save(user1);
 
 			Member user2 = new Member();
@@ -144,6 +148,7 @@ public class StartupListener {
 			user2.setPass(passwordEncoder.encode("superpass"));
 			user2.setRoles(Arrays.asList(new RoleMember(user2, Role.ROLE_USER)));
 			user2.setIsConfirmed(true);
+			user2.setFirstSystemCreated(false);
 			this.memberRepo.save(user2);
 //
 //			Member user3 = new Member();
@@ -318,7 +323,7 @@ public class StartupListener {
 					rolesTribe2.add(roleTribe5);
 					membership2.setRolesTribe(rolesTribe2);
 					
-					List<Membership> memberships1 = new ArrayList<>();
+					Set<Membership> memberships1 = new HashSet<>();
 					memberships1.add(membership1);
 					memberships1.add(membership2);
 					
@@ -332,9 +337,9 @@ public class StartupListener {
 			
 			IdentityCategory identityCategory1 = new IdentityCategory(null, IdentityCategoryEnum.ATTRACTIVE);
 			IdentityCategory identityCategory2 = new IdentityCategory(null, IdentityCategoryEnum.RELAX);
-			Weighting weighting1 = new Weighting(identity1, identityCategory1, 0.5);
-			Weighting weighting2 = new Weighting(identity1, identityCategory2, 1.0);
-			List<Weighting> weightings1 = new ArrayList<>();
+			Weighting weighting1 = new Weighting(identity1, identityCategory1, BigDecimal.valueOf(0.5));
+			Weighting weighting2 = new Weighting(identity1, identityCategory2, BigDecimal.valueOf(1.0));
+			Set<Weighting> weightings1 = new HashSet<>();
 			weightings1.add(weighting1);
 			weightings1.add(weighting2);
 			identityCategory1.setWeightings(weightings1);
@@ -343,10 +348,10 @@ public class StartupListener {
 			Identity identity2 = new Identity("Marathonien", 5, system1);
 			
 			IdentityCategory identityCategory3 = new IdentityCategory(null, IdentityCategoryEnum.ATHLETIC);
-			Weighting weighting3 = new Weighting(identity2, identityCategory1, 0.5);
-			Weighting weighting4 = new Weighting(identity2, identityCategory2, 0.5);
-			Weighting weighting5 = new Weighting(identity2, identityCategory3, 1.0);
-			List<Weighting> weightings2 = new ArrayList<>();
+			Weighting weighting3 = new Weighting(identity2, identityCategory1, BigDecimal.valueOf(0.5));
+			Weighting weighting4 = new Weighting(identity2, identityCategory2, BigDecimal.valueOf(0.5));
+			Weighting weighting5 = new Weighting(identity2, identityCategory3, BigDecimal.valueOf(1.0));
+			Set<Weighting> weightings2 = new HashSet<>();
 			weightings2.add(weighting5);
 			weightings2.add(weighting3);
 			weightings2.add(weighting4);
@@ -356,32 +361,38 @@ public class StartupListener {
 			
 			identity1.setWeightings(weightings1);
 			identity2.setWeightings(weightings2);
+			identity1.setMember(user1);
+			identity2.setMember(user1);
 			
-			List<Identity> identities1 = new ArrayList<>();
+			Set<Identity> identities1 = new HashSet<>();
 			identities1.add(identity1);
 			identities1.add(identity2);
 			
 			system1.setIdentities(identities1);
+			Set<System> systems = new HashSet<>();
+			systems.add(system1);
+			tribe1.setSystems(systems);
 			system1.setTribe(tribe1);
 			systemRepo.save(system1);
 			identityCategoryRepo.save(identityCategory1);
 			identityCategoryRepo.save(identityCategory2);
 			identityCategoryRepo.save(identityCategory3);
-			weightingRepo.saveAll(weightings1);
-			weightingRepo.saveAll(weightings2);
+//			weightingRepo.saveAll(weightings1);
+//			weightingRepo.saveAll(weightings2);
 			
 			//  Create Habits
-			List<Identity> identityList1 = new ArrayList<>();
+			Set<Identity> identityList1 = new HashSet<>();
 			identityList1.add(identity1);
 			Habit habit1 = new Habit("Intellectual masturbation", "Stimuler son intelligence", "Ouvrir un livre", user1, identityList1);
+			identityList1.remove(identity1);
 			
-			List<Habit> habitList = new ArrayList<>();
+			Set<Habit> habitList = new HashSet<>();
 			habitList.add(habit1);
 			identity1.setHabits(habitList);
-			identityList1.set(0, identity1);
+			identityList1.add(identity1);
 			habit1.setIdentities(identityList1);
 			
-			Location location1 = new Location("Café Carrion", "Avenue Moulay Hassan", "Rabat", 10010, 31.79230f, -7.08016f, null);
+			Location location1 = new Location("Café Carrion", "Avenue Moulay Hassan", "Rabat", "10010", BigDecimal.valueOf(31.79230), BigDecimal.valueOf(-7.08016), null);
 			Progression progression1 = new Progression("first version", true, location1, "V1.0", habit1, null, null);
 			location1.setHabitVersion(progression1);
 			progression1.setLocation(location1);
@@ -389,28 +400,31 @@ public class StartupListener {
 			Step conditionningHabit1 = new Step("Sortir un bouquin et ses boules quiès.", true, location1, null, user1);
 			Step reward1 = new Step("Un bon café", true, location1, null, user1);
 			
-			progression1.setConditionningHabit(conditionningHabit1);
+			progression1.setConditioningStep(conditionningHabit1);
 			progression1.setReward(reward1);
 			
-			List<Progression> progressionList = new ArrayList<>();
+			SortedSet<Progression> progressionList = new TreeSet<>();
+			progression1.setExecutionOrder(0);
 			progressionList.add(progression1);
 			habit1.setProgressions(progressionList);
 			
 			habitRepo.save(habit1);
+//			progression1.setExecutionOrder(null);
 			
 				// Habit 2
-			List<Identity> identityList2 = new ArrayList<>();
+			Set<Identity> identityList2 = new HashSet<>();
 			identityList2.add(identity2);
 			
 			Habit habit2 = new Habit("Courir tous les jours", "Marathon en moins de 3h30", "Enfiler ses baskets", user1, identityList2);
+			identityList2.remove(identity2);
 			
-			List<Habit> habitList2 = new ArrayList<>();
+			Set<Habit> habitList2 = new HashSet<>();
 			habitList2.add(habit2);
 			identity2.setHabits(habitList2);
-			identityList2.set(0, identity2);
+			identityList2.add(identity2);
 			habit2.setIdentities(identityList2);
 			
-			Location location2 = new Location("Moving", "Avenue de la gare, Résidence Naim", "Meknès", 50000, 33.89500f, -5.55472f, null);
+			Location location2 = new Location("Moving", "Avenue de la gare, Résidence Naim", "Meknès", "50000", BigDecimal.valueOf(33.89500), BigDecimal.valueOf(-5.55472), null);
 			Progression progression2 = new Progression("first version", true, location2, "V1.0", habit2, null, null);
 			location2.setHabitVersion(progression2);
 			progression2.setLocation(location2);
@@ -418,36 +432,41 @@ public class StartupListener {
 			Metric metric2 = new Metric("Temps", "min", true, null, progression2);
 			Metric metric3 = new Metric("Distance parcourue", "km", false, null, progression2);
 			
-			List<Metric> metrics2 = new ArrayList<>();
+			Set<Metric> metrics2 = new HashSet<>();
 			metrics2.add(metric2);
 			metrics2.add(metric3);
 			progression2.setMetrics(metrics2);
 			
-			List<Progression> progressionList2 = new ArrayList<>();
+			SortedSet<Progression> progressionList2 = new TreeSet<>();
+			progression2.setExecutionOrder(0);
 			progressionList2.add(progression2);
 			habit2.setProgressions(progressionList2);
 			
 			habitRepo.save(habit2);
+			progression2.setExecutionOrder(null);
 			
 			Habit habit3 = new Habit("Douche froide tous les jours", "Un mental d'acier", "Se mettre sous la douche", user1, identityList2);
 			
-			List<Habit> habitList3 = new ArrayList<>();
+			Set<Habit> habitList3 = new HashSet<>();
 			habitList3.add(habit2);
 			habitList3.add(habit3);
+			identityList2.remove(identity2);
 			identity2.setHabits(habitList3);
-			identityList2.set(0, identity2);
+			identityList2.add(identity2);
 			habit3.setIdentities(identityList2);
 			
-			Location location3 = new Location("A la maison", "Avenue des FAR", "Meknès", 50000, 33.89530f, -5.56472f, null);
+			Location location3 = new Location("A la maison", "Avenue des FAR", "Meknès", "50000", BigDecimal.valueOf(33.89530), BigDecimal.valueOf(-5.56472), null);
 			Progression progression3 = new Progression("first version", true, location3, "V1.0", habit3, null, null);
 			location3.setHabitVersion(progression3);
 			progression3.setLocation(location3);
 			
-			List<Progression> progressionList3 = new ArrayList<>();
+			SortedSet<Progression> progressionList3 = new TreeSet<>();
+			progression3.setExecutionOrder(0);
 			progressionList3.add(progression3);
 			habit3.setProgressions(progressionList3);
 			
 			habitRepo.save(habit3);
+			progression3.setExecutionOrder(null);
 			
 			//  Create habitContracts
 			HabitContract habitContract1 = new HabitContract("Se prendre en photo tous les jours dehors en tenue de sport", "Acheter 1 pizza à Jonhny", progression2, user2);
@@ -484,9 +503,11 @@ public class StartupListener {
 			
 			List<Repetition> repetitions1 = new ArrayList<>();
 			repetitions1.add(repetition1);
+			progressionList.remove(progression1);
 			progression1.setRepetitions(repetitions1);
 			
-			progressionList.set(0, progression1);
+			progression1.setExecutionOrder(0);
+			progressionList.add(progression1);
 			habitStack1.setProgressions(progressionList);
 			
 			Weekday weekday1 = new Weekday(habitStack1, WeekdayEnum.WEDNESDAY, LocalTime.now());
@@ -494,7 +515,7 @@ public class StartupListener {
 			Weekday weekday3 = new Weekday(habitStack1, WeekdayEnum.FRIDAY, LocalTime.now());
 			Weekday weekday11 = new Weekday(habitStack1, WeekdayEnum.TUESDAY, LocalTime.now());
 			
-			List<Weekday> weekdays = new ArrayList<>();
+			Set<Weekday> weekdays = new HashSet<>();
 			weekdays.add(weekday1);
 			weekdays.add(weekday2);
 			weekdays.add(weekday3);
@@ -502,6 +523,7 @@ public class StartupListener {
 			habitStack1.setWeekdays(weekdays);
 			
 			habitStackRepo.save(habitStack1);
+//			progression1.setExecutionOrder(null);
 			
 			// Create Repetition
 			
@@ -523,7 +545,9 @@ public class StartupListener {
 //			progression2.setRepetitions(repetitions2);
 //			progression3.setRepetitions(repetitions3);
 			
-			List<Progression> progressionList4 = new ArrayList<>();
+			SortedSet<Progression> progressionList4 = new TreeSet<>();
+			progression2.setExecutionOrder(0);
+			progression3.setExecutionOrder(1);
 			progressionList4.add(progression2);
 			progressionList4.add(progression3);
 			
@@ -539,14 +563,14 @@ public class StartupListener {
 			Weekday weekday9 = new Weekday(habitStack2, WeekdayEnum.SATURDAY, LocalTime.now());
 			Weekday weekday10 = new Weekday(habitStack2, WeekdayEnum.SUNDAY, LocalTime.now());
 			
-			List<Weekday> weekdays2 = new ArrayList<>();
-			weekdays.add(weekday4);
-			weekdays.add(weekday5);
-			weekdays.add(weekday6);
-			weekdays.add(weekday7);
-			weekdays.add(weekday8);
-			weekdays.add(weekday9);
-			weekdays.add(weekday10);
+			Set<Weekday> weekdays2 = new HashSet<>();
+			weekdays2.add(weekday4);
+			weekdays2.add(weekday5);
+			weekdays2.add(weekday6);
+			weekdays2.add(weekday7);
+			weekdays2.add(weekday8);
+			weekdays2.add(weekday9);
+			weekdays2.add(weekday10);
 			habitStack2.setWeekdays(weekdays2);
 			
 			habitStackRepo.save(habitStack2);
