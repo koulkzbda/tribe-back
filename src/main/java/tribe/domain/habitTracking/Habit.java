@@ -1,7 +1,7 @@
 package tribe.domain.habitTracking;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.ProgressionWithMetricsDto;
 import tribe.domain.socialNetwork.Member;
 
 
@@ -36,14 +37,19 @@ public class Habit {
     
     @ManyToMany
     @JoinColumn
-    protected List<Identity> identities = new ArrayList<>();
+    protected Set<Identity> identities = new HashSet<>();
     
     @OneToMany(mappedBy = "habit", cascade = CascadeType.ALL)
-    protected List<Progression> progressions = new ArrayList<>();
+    protected Set<Progression> progressions = new HashSet<>();
 
     public Habit() {}
+    
+    public Habit(ProgressionWithMetricsDto p) {
+    	name = p.getHabitName();
+    	gatewayHabit = p.getGatewayHabit();
+    }
 
-	public Habit(String name, String description, String gatewayHabit, Member member, List<Identity> identities) {
+	public Habit(String name, String description, String gatewayHabit, Member member, Set<Identity> identities) {
 		this.name = name;
 		this.description = description;
 		this.gatewayHabit = gatewayHabit;
@@ -51,14 +57,26 @@ public class Habit {
 		this.identities = identities;
 	}
 
-	public Habit(String name, String description, String gatewayHabit, Member member, List<Identity> identities,
-			List<Progression> progressions) {
+	public Habit(String name, String description, String gatewayHabit, Member member, Set<Identity> identities,
+			Set<Progression> progressions) {
 		this.name = name;
 		this.description = description;
 		this.gatewayHabit = gatewayHabit;
 		this.member = member;
 		this.identities = identities;
 		this.progressions = progressions;
+	}
+	
+	public void addProgression(Progression progression) {
+		if (progression.getIsActive()) {
+			progressions.stream().forEach(p -> p.setIsActive(false));
+		}
+		progressions.add(progression);
+	}
+	
+	public void updateProgression(Progression progression) {
+		progressions.remove(progressions.stream().filter(p -> p.getId().equals(progression.getId())).findAny().orElse(null));
+		progressions.add(progression);
 	}
 
 	public String getId() {
@@ -101,19 +119,19 @@ public class Habit {
 		this.member = member;
 	}
 
-	public List<Identity> getIdentities() {
+	public Set<Identity> getIdentities() {
 		return identities;
 	}
 
-	public void setIdentities(List<Identity> identities) {
+	public void setIdentities(Set<Identity> identities) {
 		this.identities = identities;
 	}
 
-	public List<Progression> getProgressions() {
+	public Set<Progression> getProgressions() {
 		return progressions;
 	}
 
-	public void setProgressions(List<Progression> progressions) {
+	public void setProgressions(Set<Progression> progressions) {
 		this.progressions = progressions;
 	}
 }

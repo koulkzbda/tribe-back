@@ -1,6 +1,8 @@
 package tribe.domain.socialNetwork;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -24,11 +26,11 @@ public abstract class Pictures {
 	
     
     @OneToMany(mappedBy = "pictures", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    protected List<Picture> pictures;
+    protected Set<Picture> pictures = new HashSet<>();
     
     public Pictures() {}
 
-	public Pictures(List<Picture> pictures) {
+	public Pictures(Set<Picture> pictures) {
 		this.pictures = pictures;
 	}
 
@@ -40,11 +42,11 @@ public abstract class Pictures {
 		this.id = id;
 	}
 
-	public List<Picture> getPictures() {
+	public Set<Picture> getPictures() {
 		return pictures;
 	}
 
-	public void setPictures(List<Picture> pictures) {
+	public void setPictures(Set<Picture> pictures) {
 		this.pictures = pictures;
 	}
 	

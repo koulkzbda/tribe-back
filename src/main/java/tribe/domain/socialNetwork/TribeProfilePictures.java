@@ -1,6 +1,6 @@
 package tribe.domain.socialNetwork;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ public class TribeProfilePictures extends Pictures {
 		super();
 	}
 
-	public TribeProfilePictures(List<Picture> pictures, TribeProfile tribeProfile) {
+	public TribeProfilePictures(Set<Picture> pictures, TribeProfile tribeProfile) {
 		super(pictures);
 		this.tribeProfile = tribeProfile;
 	}

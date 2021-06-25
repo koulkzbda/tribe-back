@@ -20,7 +20,7 @@ public class Repetition extends Publication {
 	@OneToOne(cascade = CascadeType.ALL)
 	protected RepetitionStatus repetitionStatus;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
     protected Progression progression;
     
     @OneToMany(mappedBy = "repetition", cascade = CascadeType.ALL)

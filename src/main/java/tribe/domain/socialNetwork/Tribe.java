@@ -2,7 +2,9 @@ package tribe.domain.socialNetwork;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,6 +16,8 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+
+import tribe.domain.habitTracking.System;
 
 
 @Entity
@@ -40,7 +44,10 @@ public class Tribe {
     protected TribeWall tribeWall;
     
     @OneToMany(mappedBy = "tribe", cascade = CascadeType.ALL)
-	protected List<Membership> memberships = new ArrayList<>();
+    protected Set<Membership> memberships = new HashSet<>();
+    
+    @OneToMany(mappedBy = "tribe", cascade = CascadeType.ALL)
+	protected Set<System> systems = new HashSet<>();
     
     @ManyToMany(mappedBy = "tribes", cascade = CascadeType.ALL)
     protected List<TribeCategory> tribeCategory = new ArrayList<>();
@@ -121,11 +128,19 @@ public class Tribe {
 		this.tribeCategory = tribeCategory;
 	}
 
-	public List<Membership> getMemberships() {
+	public Set<System> getSystems() {
+		return systems;
+	}
+
+	public void setSystems(Set<System> systems) {
+		this.systems = systems;
+	}
+
+	public Set<Membership> getMemberships() {
 		return memberships;
 	}
 
-	public void setMemberships(List<Membership> memberships) {
+	public void setMemberships(Set<Membership> memberships) {
 		this.memberships = memberships;
 	}
 }

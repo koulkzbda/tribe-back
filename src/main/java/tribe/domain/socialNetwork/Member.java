@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 import tribe.controller.dto.MemberCreatedDto;
 import tribe.domain.enumaration.Role;
 import tribe.domain.habitTracking.HabitContract;
+import tribe.domain.habitTracking.Identity;
 import tribe.domain.habitTracking.Step;
 import tribe.domain.habitTracking.System;
 
@@ -44,6 +45,8 @@ public class Member {
     protected LocalDateTime nextUpdateRepetition;
     
     protected Boolean isConfirmed = false;
+    
+    protected Boolean firstSystemCreated;
     
     protected String confirmationToken;
     
@@ -71,6 +74,9 @@ public class Member {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
 	protected List<Membership> memberships = new ArrayList<>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "member")
+    protected List<Identity> identities = new ArrayList<>();
+    
     public Member() {}
     
     public Member(MemberCreatedDto member) {
@@ -80,6 +86,7 @@ public class Member {
     	pass = member.getPassword();
     	registeredAt = LocalDateTime.now();
     	roles = Arrays.asList(new RoleMember(this, Role.ROLE_USER));
+    	firstSystemCreated = false;
     }
 
 	public Member(String firstName, String lastName, String email, String pass, LocalDateTime registeredAt,
@@ -301,11 +308,27 @@ public class Member {
 		this.isConfirmed = isConfirmed;
 	}
 
+	public Boolean getFirstSystemCreated() {
+		return firstSystemCreated;
+	}
+
+	public void setFirstSystemCreated(Boolean firstSystemCreated) {
+		this.firstSystemCreated = firstSystemCreated;
+	}
+
 	public String getConfirmationToken() {
 		return confirmationToken;
 	}
 
 	public void setConfirmationToken(String confirmationToken) {
 		this.confirmationToken = confirmationToken;
+	}
+
+	public List<Identity> getIdentities() {
+		return identities;
+	}
+
+	public void setIdentities(List<Identity> identities) {
+		this.identities = identities;
 	}
 }

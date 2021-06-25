@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import tribe.domain.socialNetwork.MemberProfile;
 
-public class ProfileDto {
+public class MemberProfileDto {
 
 	protected String id;
 
@@ -16,21 +16,21 @@ public class ProfileDto {
 	
 	protected String userId;
 
-	public ProfileDto() {}
+	public MemberProfileDto() {}
 	
-	public ProfileDto(String id, String bio) {
+	public MemberProfileDto(String id, String bio) {
 		this.id = id;
 		this.bio = bio;
 	}
 
-	public ProfileDto(String id, String bio, List<PictureDto> profilePictures) {
+	public MemberProfileDto(String id, String bio, List<PictureDto> profilePictures) {
 		super();
 		this.id = id;
 		this.bio = bio;
 		this.profilePictures = profilePictures;
 	}
 
-	public ProfileDto(MemberProfile profile) {
+	public MemberProfileDto(MemberProfile profile) {
 		this.id = profile.getId();
 		this.bio = profile.getBio();
 		this.profilePictures = profile.getProfilePictures().getPictures().stream().map(PictureDto::new).collect(Collectors.toList());

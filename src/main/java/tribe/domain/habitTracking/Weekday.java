@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.WeekdayDto;
 import tribe.domain.enumaration.WeekdayEnum;
 
 @Entity
@@ -31,6 +32,11 @@ public class Weekday {
     protected LocalTime time;
 
     public Weekday() {
+    }
+    
+    public Weekday(WeekdayDto wd) {
+    	weekday = WeekdayEnum.valueOfLabel(wd.getWeekday().getLabel());
+    	time = wd.getTime().toLocalTime();
     }
 
 	public Weekday(HabitStack habitStack, WeekdayEnum weekday, LocalTime time) {

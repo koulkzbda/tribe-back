@@ -1,5 +1,7 @@
 package tribe.domain.socialNetwork;
 
+import java.math.BigDecimal;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.LocationDto;
 import tribe.domain.habitTracking.HabitVersion;
 
 @Entity
@@ -25,19 +28,28 @@ public class Location {
 	
 	protected String city;
 	
-	protected Integer postalCode;
+	protected String postalCode;
 	
-	protected Float lat;
+	protected BigDecimal lat;
 	
-	protected Float lng;
+	protected BigDecimal lng;
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn
     protected HabitVersion habitVersion;
 
 	public Location() {}
+	
+	public Location(LocationDto l) {
+		name = l.getName();
+		address = l.getAddress();
+		city = l.getCity();
+		postalCode = l.getPostalCode();
+		lat = l.getLat();
+		lng = l.getLng();
+	}
 
-	public Location(String name, String address, String city, Integer postalCode, Float lat, Float lng,
+	public Location(String name, String address, String city, String postalCode, BigDecimal lat, BigDecimal lng,
 			HabitVersion habitVersion) {
 		this.name = name;
 		this.address = address;
@@ -80,27 +92,27 @@ public class Location {
 		this.city = city;
 	}
 
-	public Integer getPostalCode() {
+	public String getPostalCode() {
 		return postalCode;
 	}
 
-	public void setPostalCode(Integer postalCode) {
+	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
 
-	public Float getLat() {
+	public BigDecimal getLat() {
 		return lat;
 	}
 
-	public void setLat(Float lat) {
+	public void setLat(BigDecimal lat) {
 		this.lat = lat;
 	}
 
-	public Float getLng() {
+	public BigDecimal getLng() {
 		return lng;
 	}
 
-	public void setLng(Float lng) {
+	public void setLng(BigDecimal lng) {
 		this.lng = lng;
 	}
 

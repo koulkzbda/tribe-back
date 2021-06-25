@@ -4,6 +4,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+import tribe.controller.dto.LocationDto;
+import tribe.controller.dto.StepDto;
 import tribe.domain.socialNetwork.Location;
 import tribe.domain.socialNetwork.Member;
 
@@ -18,6 +20,17 @@ public class Step extends HabitVersion {
 	
     public Step() {
     	super();
+    }
+    
+    public Step(StepDto step) {
+    	super();
+    	description = step.getDescription();
+    	isActive = true;
+    	
+    	LocationDto newLocation = step.getLocation();
+    	if(newLocation != null) {
+    		location = new Location(newLocation);
+    	}
     }
 
 	public Step(String description, Boolean isActive, Location location, String score, Member member) {

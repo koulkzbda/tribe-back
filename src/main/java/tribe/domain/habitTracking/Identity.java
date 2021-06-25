@@ -1,7 +1,8 @@
 package tribe.domain.habitTracking;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -13,6 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import tribe.controller.dto.IdentityDto;
+import tribe.domain.socialNetwork.Member;
 
 
 @Entity
@@ -26,40 +32,61 @@ public class Identity {
 	
     protected String name;
     
-    protected Integer vote;
+    protected Integer votes;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+	protected Member member;
     
     @ManyToOne(cascade = CascadeType.ALL)
     protected System system;
     
-    @OneToMany(mappedBy = "identity")
-	protected List<Weighting> weightings = new ArrayList<>();
+    @OneToMany(mappedBy = "identity", cascade = CascadeType.ALL)
+    @NotFound(action = NotFoundAction.IGNORE)
+	protected Set<Weighting> weightings = new HashSet<>();
     
     @ManyToMany(mappedBy = "identities", cascade = CascadeType.ALL)
-	protected List<Habit> habits = new ArrayList<>();
+	protected Set<Habit> habits = new HashSet<>();
 
     public Identity() {}
 
-	public Identity(String name, Integer vote, System system) {
+	public Identity(String name, Integer votes, System system) {
 		this.name = name;
-		this.vote = vote;
+		this.votes = votes;
 		this.system = system;
 	}
 
-	public Identity(String name, Integer vote, System system, List<Weighting> weightings) {
-		super();
+//	public Identity(IdentityDto identity) {
+//		this.name = identity.getName();
+//		this.votes = identity.getVotes();
+//		this.weightings = identity.getWeightings().stream().map(Weighting::new).collect(Collectors.toSet());
+//	}
+	
+	public Identity(IdentityDto identity) {
+		if (identity.getId() != null) {
+			this.id = identity.getId();
+		}
+		this.name = identity.getName();
+		this.votes = identity.getVotes();
+		this.weightings = identity.getWeightings().stream().map(Weighting::new).peek(w -> w.setIdentity(this)).collect(Collectors.toSet());
+	}
+	
+	public Identity(String name, Integer votes, System system, Set<Weighting> weightings) {
 		this.name = name;
-		this.vote = vote;
+		this.votes = votes;
 		this.system = system;
 		this.weightings = weightings;
 	}
 
-	public Identity(String name, Integer vote, System system, List<Weighting> weightings, List<Habit> habits) {
-		super();
+	public Identity(String name, Integer votes, System system, Set<Weighting> weightings, Set<Habit> habits) {
 		this.name = name;
-		this.vote = vote;
+		this.votes = votes;
 		this.system = system;
 		this.weightings = weightings;
 		this.habits = habits;
+	}
+	
+	public void addHabit(Habit habit) {
+		habits.add(habit);
 	}
 
 	public String getId() {
@@ -78,12 +105,20 @@ public class Identity {
 		this.name = name;
 	}
 
-	public Integer getVote() {
-		return vote;
+	public Integer getVotes() {
+		return votes;
 	}
 
-	public void setVote(Integer vote) {
-		this.vote = vote;
+	public void setVotes(Integer votes) {
+		this.votes = votes;
+	}
+
+	public Member getMember() {
+		return member;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
 	}
 
 	public System getSystem() {
@@ -94,19 +129,19 @@ public class Identity {
 		this.system = system;
 	}
 
-	public List<Weighting> getWeightings() {
+	public Set<Weighting> getWeightings() {
 		return weightings;
 	}
 
-	public void setWeightings(List<Weighting> weightings) {
+	public void setWeightings(Set<Weighting> weightings) {
 		this.weightings = weightings;
 	}
 
-	public List<Habit> getHabits() {
+	public Set<Habit> getHabits() {
 		return habits;
 	}
 
-	public void setHabits(List<Habit> habits) {
+	public void setHabits(Set<Habit> habits) {
 		this.habits = habits;
 	}
 }

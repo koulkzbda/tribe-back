@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -84,7 +85,7 @@ public class ProfilePicturesService {
 				memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(NoMemberFoundException::new).getId())
 				.orElseThrow(NoProfileFoundException::new);
 		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
-		List<Picture> pictures = memberProfilePictures.getPictures();
+		Set<Picture> pictures = memberProfilePictures.getPictures();
 
 		if (pictures.stream().anyMatch(pict -> pict.getId().equals(pictureDto.getId()))) {
 			pictures.stream().forEach(pict -> {
@@ -114,7 +115,7 @@ public class ProfilePicturesService {
 				memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(NoMemberFoundException::new).getId())
 				.orElseThrow(NoProfileFoundException::new);
 		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
-		List<Picture> pictures = memberProfilePictures.getPictures();
+		Set<Picture> pictures = memberProfilePictures.getPictures();
 
 		return pictures.stream().map(PictureDto::new).collect(Collectors.toList());
 	}
@@ -125,11 +126,11 @@ public class ProfilePicturesService {
 				memberRepo.findByEmail(securityService.getUserEmail()).orElseThrow(NoMemberFoundException::new).getId())
 				.orElseThrow(NoProfileFoundException::new);
 		MemberProfilePictures memberProfilePictures = profile.getProfilePictures();
-		List<Picture> pictures = memberProfilePictures.getPictures();
+		Set<Picture> pictures = memberProfilePictures.getPictures();
 
 		if (pictures.stream().anyMatch(pict -> pict.getId().equals(id))) {
 			this.pictureRepo.deleteById(id);
-			pictures = pictures.stream().filter(pict -> !pict.getId().equals(id)).collect(Collectors.toList());
+			pictures = pictures.stream().filter(pict -> !pict.getId().equals(id)).collect(Collectors.toSet());
 		} else {
 			throw new NoPicturesFoundException(new ErrorMessageDto(
 					ErrorCode.PICTURE,

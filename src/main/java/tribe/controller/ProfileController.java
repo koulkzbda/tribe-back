@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import tribe.controller.dto.PictureDto;
-import tribe.controller.dto.ProfileDto;
+import tribe.controller.dto.MemberProfileDto;
 import tribe.service.ProfilePicturesService;
 import tribe.service.ProfileService;
 
@@ -36,7 +36,7 @@ public class ProfileController {
 	}
 
 	@GetMapping(produces = "application/tribe-back-v1+json")
-	public ResponseEntity<ProfileDto> findByConnectedMember() {
+	public ResponseEntity<MemberProfileDto> findByConnectedMember() {
 		return ResponseEntity.status(HttpStatus.OK).body(profileService.findByConnectedMember());
 	}
 
@@ -51,9 +51,9 @@ public class ProfileController {
 	}
 
 	@PostMapping(value = "/bio", produces = "application/tribe-back-v1+json")
-	public ResponseEntity<?> updateBio(@Valid @RequestBody ProfileDto profileDto) {
+	public ResponseEntity<?> updateBio(@Valid @RequestBody MemberProfileDto memberProfileDto) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(profileService.updateBio(profileDto));
+		return ResponseEntity.status(HttpStatus.OK).body(profileService.updateBio(memberProfileDto));
 	}
 
 	@PatchMapping(value = "/profile-picture", produces = "application/tribe-back-v1+json")

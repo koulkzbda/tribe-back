@@ -95,17 +95,21 @@ public class RepetitionService {
 	
 	@Transactional
 	public void updateRepetitionsForToday(Member member, WeekdayEnum weekdayEnum) {
+		LocalDateTime today = LocalDate.now().atTime(0, 0, 0, 1);
 		List<Progression> progressions = progressionRepo.findByMemberIdAndWeekday(member.getId(), weekdayEnum);
 		progressions.stream().forEach(progression -> {
-			RepetitionStatus repetitionStatus = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+			if (!progression.getRepetitions().stream().anyMatch(r -> r.getPostedAt().compareTo(today) >= 0)) {
+				RepetitionStatus repetitionStatus = new RepetitionStatus(RepetitionStatusEnum.TO_DO);
+				
+				Repetition repetition = new Repetition(repetitionStatus, progression, null);
+				PublicationPictures publicationPictures = new PublicationPictures(new HashSet<>(), repetition);
+				repetition.setPublicationPictures(publicationPictures);
+				repetition.setAuthor(member);
+				progression.addRepetition(repetition);
+				
+				progressionRepo.save(progression);
+			}
 			
-			Repetition repetition = new Repetition(repetitionStatus, progression, null);
-			PublicationPictures publicationPictures = new PublicationPictures(new ArrayList<>(), repetition);
-			repetition.setPublicationPictures(publicationPictures);
-			repetition.setAuthor(member);
-			progression.addRepetition(repetition);
-			
-			progressionRepo.save(progression);
 		});
 		
 		

@@ -1,5 +1,7 @@
 package tribe.controller.dto;
 
+import java.math.BigDecimal;
+
 import tribe.domain.socialNetwork.Location;
 
 public class LocationDto {
@@ -10,9 +12,11 @@ public class LocationDto {
 	
 	protected String city;
 	
-	protected Float lat;
+	protected String postalCode;
 	
-	protected Float lng;
+	protected BigDecimal lat;
+	
+	protected BigDecimal lng;
 	
 	public LocationDto() {}
 	
@@ -20,16 +24,9 @@ public class LocationDto {
 		this.name = location.getName();
 		this.address = location.getAddress();
 		this.city = location.getCity();
+		this.postalCode = location.getPostalCode();
 		this.lat = location.getLat();
 		this.lng = location.getLng();
-	}
-
-	public LocationDto(String name, String address, String city, Float lat, Float lng) {
-		this.name = name;
-		this.address = address;
-		this.city = city;
-		this.lat = lat;
-		this.lng = lng;
 	}
 
 	public String getName() {
@@ -56,19 +53,27 @@ public class LocationDto {
 		this.city = city;
 	}
 
-	public Float getLat() {
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public BigDecimal getLat() {
 		return lat;
 	}
 
-	public void setLat(Float lat) {
+	public void setLat(BigDecimal lat) {
 		this.lat = lat;
 	}
 
-	public Float getLng() {
+	public BigDecimal getLng() {
 		return lng;
 	}
 
-	public void setLng(Float lng) {
+	public void setLng(BigDecimal lng) {
 		this.lng = lng;
 	}
 }

@@ -1,20 +1,20 @@
 package tribe.domain.habitTracking;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.SystemCreatedDto;
 import tribe.domain.socialNetwork.Member;
 import tribe.domain.socialNetwork.Tribe;
 
@@ -38,27 +38,33 @@ public class System {
     protected Member member;
     
     @OneToMany(mappedBy = "system", cascade = CascadeType.ALL)
-    protected List<Identity> identities  = new ArrayList<>();
+    protected Set<Identity> identities  = new HashSet<>();
     
-    @OneToMany(mappedBy = "system")
-	protected List<HabitStack> habitStacks = new ArrayList<>();
+    @OneToMany(mappedBy = "system", cascade = CascadeType.ALL)
+	protected Set<HabitStack> habitStacks = new HashSet<>();
     
-    @OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "tribe_id")
+    @ManyToOne(cascade = CascadeType.ALL)
 	protected Tribe tribe;
 
     public System() {}
 
-	public System(String name, String description, Boolean isActive, Member member, List<Identity> identities) {
+	public System(String name, String description, Boolean isActive, Member member, Set<Identity> identities) {
 		this.name = name;
 		this.description = description;
 		this.isActive = isActive;
 		this.member = member;
 		this.identities = identities;
 	}
+	
+	public System(SystemCreatedDto systemCreated, Member member, Set<Identity> identities) {
+		name = systemCreated.getName();
+		isActive = true;
+		this.member = member;
+		this.identities = identities.stream().peek(id -> id.setSystem(this)).collect(Collectors.toSet());;
+	}
 
-	public System(String name, String description, Boolean isActive, Member member, List<Identity> identities,
-			List<HabitStack> habitStacks) {
+	public System(String name, String description, Boolean isActive, Member member, Set<Identity> identities,
+			Set<HabitStack> habitStacks) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -66,6 +72,14 @@ public class System {
 		this.member = member;
 		this.identities = identities;
 		this.habitStacks = habitStacks;
+	}
+	
+	public void addIdentity(Identity identity) {
+		identities.add(identity);
+	}
+	
+	public void addHabitStack(HabitStack hs) {
+		habitStacks.add(hs);
 	}
 
 	public String getId() {
@@ -108,19 +122,19 @@ public class System {
 		this.member = member;
 	}
 
-	public List<Identity> getIdentities() {
+	public Set<Identity> getIdentities() {
 		return identities;
 	}
 
-	public void setIdentities(List<Identity> identities) {
+	public void setIdentities(Set<Identity> identities) {
 		this.identities = identities;
 	}
 
-	public List<HabitStack> getHabitStacks() {
+	public Set<HabitStack> getHabitStacks() {
 		return habitStacks;
 	}
 
-	public void setHabitStacks(List<HabitStack> habitStacks) {
+	public void setHabitStacks(Set<HabitStack> habitStacks) {
 		this.habitStacks = habitStacks;
 	}
 

@@ -10,6 +10,8 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import tribe.controller.dto.MetricDto;
+
 
 @Entity
 public class Metric {
@@ -33,6 +35,12 @@ public class Metric {
     protected Progression progression;
 
     public Metric() {}
+    
+    public Metric(MetricDto metric) {
+    	name = metric.getMetricName();
+    	unit = metric.getMetricUnit();
+//    	isPrincipal = metric.getIsPrincipal();
+    }
 
 	public Metric(String name, String unit, Boolean isPrincipal, MetricValue metricValue, Progression progression) {
 		this.name = name;

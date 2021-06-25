@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import tribe.controller.dto.ErrorCode;
+import tribe.controller.dto.ErrorMessageDto;
 import tribe.controller.dto.MemberDto;
 import tribe.repository.MemberRepo;
 
@@ -58,6 +60,16 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
 		
 		tribe.domain.socialNetwork.Member tribeUser = memberRepo.findByEmail(user.getUsername())
 				.orElseThrow(() -> new IllegalArgumentException("No matching user for this email"));
+		
+		if (!tribeUser.getIsConfirmed()) {
+			System.out.println(tribeUser.getEmail());
+			ErrorMessageDto error = new ErrorMessageDto(ErrorCode.NOT_CONFIRMED, tribeUser.getEmail(), tribeUser.getFirstName() + " " + tribeUser.getLastName());
+			response.setContentType("application/json");
+			response.getWriter().write(mapper.writeValueAsString(error));
+			response.setStatus(403);
+			
+			return;
+		}
 
 		String jws = generateToken(user);
 
