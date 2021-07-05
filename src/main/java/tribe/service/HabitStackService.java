@@ -175,6 +175,7 @@ public class HabitStackService {
 	@Transactional
 	private Habit updateHabit(Habit habit, ProgressionWithMetricsDto p, Member member, System system, Weekday today) {
 		habit.setName(p.getHabitName());
+		member.setFirstSystemCreated(true);
 		habit.setMember(member);
 		habit.setGatewayHabit(p.getGatewayHabit());
 		Set<Identity> identities = new HashSet<>();
